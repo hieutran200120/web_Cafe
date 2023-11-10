@@ -15,8 +15,8 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const user = localStorage.getItem("user");
-  if (!user) {
+  const isLogin = localStorage.getItem("isLogin");
+  if (!isLogin) {
     return <Navigate to={"/login"} />;
   }
 

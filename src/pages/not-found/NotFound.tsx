@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 const NotFound = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // window.document.title = '404 - admin'
-  }, [window.location.pathname]);
+  // useEffect(() => {
+  //   // window.document.title = '404 - admin'
+  // }, [window.location.pathname]);
 
   return (
     <Result

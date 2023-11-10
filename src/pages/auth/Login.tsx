@@ -8,29 +8,25 @@ import useAction from '../../redux/useActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import { authService } from '../../utils/services/authService ';
+import { useNavigate } from 'react-router-dom';
 const Login: React.FC = () => {
   const [login, setLogin] = useState(false);
+  const navigate = useNavigate()
   const [form] = Form.useForm();
-  // const actions = useAction();
-  // const dispatch = useDispatch();
+  const actions = useAction();
+  const dispatch = useDispatch();
   const loading = useSelector((state: any) => state.state.loadingState);
   const isLogin = useSelector((state: any) => state.state.loginState);
-  // const token = sessionStorage.getItem("name");
-  // useEffect(() => {
-  //     if (sessionStorage.getItem("login")) {
-  //         setLogin(true);
-  //     }
-  // }, []);
   const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
-
     authService.handleLoginApi(values)
       .then((response: any) => {
-        console.log('Login API response:', response);
-        // sessionStorage.setItem("login", "true");
-        // sessionStorage.setItem("name", response.data.token);
-        // setLogin(true);
-        console.log(isLogin);
+        if (response?.status) {
+
+          localStorage.setItem("isLogin", "true")
+          localStorage.setItem("token", response.data.access_token)
+          localStorage.setItem("resfershToken", response.data.refresh_token)
+          navigate(RouterLinks.BAO_CAO_DOANH_THU)
+        }
       })
       .catch((error: any) => {
         console.error('Error while calling login API:', error);

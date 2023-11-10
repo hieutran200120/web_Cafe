@@ -5,13 +5,14 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 export const AuthorizationComponent = (props: any) => {
     const navigate = useNavigate();
-    const isLogin = useSelector((state: any) => state.state.loginState);
+    // const isLogin = useSelector((state: any) => state.state.loginState);
     const permission = localStorage.getItem("permission");
-    useEffect(() => {
-        if (permission === "User") {
-            navigate(RouterLinks.DAT_BAN);
-        }
-    }, [navigate, permission]);
+    const isLogin = localStorage.getItem("isLogin");
+    // useEffect(() => {
+    //     if (permission === "User") {
+    //         navigate(RouterLinks.DAT_BAN);
+    //     }
+    // }, [navigate, permission]);
     if (isLogin) {
         return props.element;
     } else {
