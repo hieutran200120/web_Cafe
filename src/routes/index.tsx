@@ -14,11 +14,12 @@ import DanhMuc from "../pages/mathang/DanhMuc";
 import LuaChon from "../pages/mathang/LuaChon";
 import Combo from "../pages/mathang/Combo";
 import DatBan from "../pages/datban/DatBan";
+import Promotion from "../pages/promotion";
+import DanhSachKhachHang from "../pages/khachhang/danhsachkhachhang";
 import TonKho from "../pages/kho/TonKho";
 import NhapKho from "../pages/kho/NhapKho";
 import XuatKho from "../pages/kho/XuatKho";
 import KiemKe from "../pages/kho/KiemKe";
-import KhuyenMai from "../pages/khuyenmai/KhuyenMai";
 import NhanVien from "../pages/baocao/NhanVien";
 export const router = createBrowserRouter([
   {
@@ -95,8 +96,12 @@ export const router = createBrowserRouter([
         element: <KiemKe />,
       },
       {
-        path: RouterLinks.KUYEN_MAI,
-        element: <KhuyenMai />,
+        path: RouterLinks.KHUYEN_MAI,
+        element: <Promotion />,
+      },
+      {
+        path: RouterLinks.DANH_SACH_KHACH_HANG,
+        element: <DanhSachKhachHang />,
       },
     ],
   },

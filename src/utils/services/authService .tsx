@@ -1,7 +1,7 @@
 import createApiServices from "../createApiService";
 const api = createApiServices();
 const handleLoginApi = (loginInfo: any) => {
-  return api.makeRequest({
+  return api.makeAuthRequest({
     url: "/api/v1/auth/login",
     method: "POST",
     data: loginInfo,
@@ -9,7 +9,7 @@ const handleLoginApi = (loginInfo: any) => {
 };
 
 const handleRegister = (regisInfo: any) => {
-  return api.makeRequest({
+  return api.makeAuthRequest({
     url: "/api/Authorization/Registration",
     method: "POST",
     data: regisInfo,
@@ -24,7 +24,7 @@ const handleRevoke = () => {
 };
 
 const handleRefreshToken = (data: any) => {
-  return api.makeRequest({
+  return api.makeAuthRequest({
     url: "/api/Token/Refresh",
     method: "POST",
     data,

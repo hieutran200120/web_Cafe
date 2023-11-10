@@ -56,7 +56,7 @@ const menuItems = [
         label: "Báo cáo tài chính",
       },
       {
-        key: RouterLinks.KUYEN_MAI,
+        key: RouterLinks.KHUYEN_MAI,
         label: "Báo cáo khuyễn mãi",
       },
       {
@@ -113,15 +113,21 @@ const menuItems = [
 
   },
   {
-    key: RouterLinks.KHO_HANG,
+    key: RouterLinks.DANH_SACH_KHACH_HANG,
     label: "Khách hàng",
     icon: (
       <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />
     ),
+    children: [
+      {
+        key: RouterLinks.DANH_SACH_KHACH_HANG,
+        label:"Danh sách khách hàng"
+      }
+    ]
 
   },
   {
-    key: RouterLinks.KUYEN_MAI,
+    key: RouterLinks.KHUYEN_MAI,
     label: "Khuyến mãi ",
     icon: (
       <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />

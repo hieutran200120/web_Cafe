@@ -16,5 +16,6 @@ export const RouterLinks = {
   NHAP_KHO: "/khohang/nhapkho",
   XUAT_KHO: "/khohang/xuatkho",
   KIEM_KE: "/khohang/kiemke",
-  KUYEN_MAI: "/khuyanmai"
+  KHUYEN_MAI: "/khuyenmai",
+  DANH_SACH_KHACH_HANG: "/khachhang/danhsachkhachhang"
 };
