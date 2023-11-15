@@ -1,83 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { RouterLinks } from '../../const/RouterLinks';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
-import { Link, Navigate } from "react-router-dom";
-import "./Login.scss"
-import useAction from '../../redux/useActions';
-import { useDispatch, useSelector } from 'react-redux';
-import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
-import { authService } from '../../utils/services/authService ';
-import { useNavigate } from 'react-router-dom';
-const Login: React.FC = () => {
-  const [login, setLogin] = useState(false);
+import React from "react";
+import { Form, Button, Input, Row, Col } from "antd"
+import { message } from "antd";
+import { authServices } from "../../utils/services/authService ";
+import { useDispatch } from "react-redux";
+import useAction from "../../redux/useActions";
+import { useNavigate } from "react-router-dom";
+import { RouterLinks } from "../../const/RouterLinks";
+const Login = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate()
-  const [form] = Form.useForm();
-  const actions = useAction();
-  const dispatch = useDispatch();
-  const loading = useSelector((state: any) => state.state.loadingState);
-  const isLogin = useSelector((state: any) => state.state.loginState);
-  const onFinish = (values: any) => {
-    authService.handleLoginApi(values)
-      .then((response: any) => {
-        if (response?.status) {
+  const [form] = Form.useForm()
+  const dispatch = useDispatch()
+  const actions = useAction()
 
-          localStorage.setItem("isLogin", "true")
-          localStorage.setItem("token", response.data.access_token)
-          localStorage.setItem("resfershToken", response.data.refresh_token)
-          navigate(RouterLinks.BAO_CAO_DOANH_THU)
-        }
-      })
-      .catch((error: any) => {
-        console.error('Error while calling login API:', error);
-      });
-  };
-  if (isLogin) {
-    return <Navigate to={RouterLinks.BAO_CAO_DOANH_THU} />;
+  const onFinish = async (value: any) => {
+    try {
+      const res = await authServices.login(value);
+      console.log(res)
+      if (res.status) {
+        dispatch(actions.AuthActions.userInfo(res.data))
+        localStorage.setItem("username", res.data.TaiKhoan)
+        localStorage.setItem("token", res.data.access_token)
+        localStorage.setItem("refresh_token", res.data.refresh_token)
+        navigate(RouterLinks.HOME_PAGE)
+      } else {
+        message.error(res.message)
+      }
+    } catch (err) {
+      console.log(err);
+      message.error("Đăng nhập thất bại")
+    }
   }
-  return (
-    <div className='login_content'>
-      <div className='login'>
-        <div className="login-main " >
-          <div className="ant-pro-form-login-top">
-            <div className="ant-pro-form-login-header ">
-              <span className="ant-pro-form-login-logo ">
-                <img alt="logo" src="/logo.svg" />
-              </span>
-              <span className="ant-pro-form-login-title ">Ant Design</span>
-            </div>
-            <div className="ant-pro-form-login-desc ">Ant Design </div>
-          </div>
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            form={form}
-          >
-            <Form.Item
-              name="username"
-              rules={[{ required: true, message: 'Please input your Username!' },
-              {
-                validator: async (_, value) => {
-                  if (value) {
-                    const regex = /^\s*$/
-                    if (regex.test(value)) {
-                      throw new Error("username không hợp lệ !")
-                    }
-
-                  }
+  return <div className="login">
+    {contextHolder}
+    <Row>
+      <Col span={8}></Col>
+      <Col span={8}>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            label="Tên đăng nhập"
+            name="username"
+            rules={
+              [
+                {
+                  required: true,
+                  message: "Tên đăng nhập không được bỏ trống"
                 },
-              }
-              ]}
-
-            >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: 'Please input your Password!' },
                 {
                   validator: async (_, value) => {
                     if (value) {
@@ -89,35 +57,35 @@ const Login: React.FC = () => {
                     }
                   },
                 }
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                placeholder="Nhập mật khẩu"
-                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
+              ]
+            }
+          >
+            <Input placeholder="Tên đăng nhập" />
+          </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={
+              [
+                {
+                  required: true,
+                  message: "Mât khảu không được bỏ trống"
+                },
 
-              <a className="login-form-forgot" href="">
-                Forgot password
-              </a>
-            </Form.Item>
+              ]
+            }
+          >
+            <Input.Password placeholder="Mật khẩu" />
+          </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button">
-                Log in
-              </Button>
-              Or <a href="">register now!</a>
-            </Form.Item>
-          </Form>
-        </div>
-      </div>
-    </div>
-  );
+          <Form.Item>
+            <Button htmlType="submit" type="primary">Đăng nhập</Button>
+          </Form.Item>
+        </Form>
+      </Col>
+      <Col span={8}></Col>
+    </Row>
+  </div>;
 };
 
 export default Login;

@@ -1,3 +1,3 @@
 export const serverConfig = {
-  server: "https://cafe-api-web.adaptable.app/",
+  server: "https://web-api-cafe.adaptable.app/",
 };
