@@ -8,13 +8,12 @@ import Doanhthu from "../pages/baocao/Doanhthu";
 import Mathang from "../pages/baocao/MatHang";
 import Khohang from "../pages/baocao/KhoHang";
 import TaiChinh from "../pages/baocao/TaiChinh";
-import DanhSachHang from "../pages/mathang/DanhSachHang";
+import DanhSachHang from "../pages/mathang/danhmuc/DanhMucHang";
 import ThucDon from "../pages/mathang/ThucDon";
-import DanhMuc from "../pages/mathang/DanhMuc";
+import DanhMuc from "../pages/mathang/danhmuc/DanhMucHang";
 import LuaChon from "../pages/mathang/LuaChon";
-import Combo from "../pages/mathang/Combo";
+import Combo from "../pages/mathang/combo/Combo";
 import DatBan from "../pages/datban/DatBan";
-import Promotion from "../pages/promotion";
 import DanhSachKhachHang from "../pages/khachhang/danhsachkhachhang";
 import TonKho from "../pages/kho/TonKho";
 import NhapKho from "../pages/kho/NhapKho";
@@ -94,10 +93,6 @@ export const router = createBrowserRouter([
       {
         path: RouterLinks.KIEM_KE,
         element: <KiemKe />,
-      },
-      {
-        path: RouterLinks.KHUYEN_MAI,
-        element: <Promotion />,
       },
       {
         path: RouterLinks.DANH_SACH_KHACH_HANG,

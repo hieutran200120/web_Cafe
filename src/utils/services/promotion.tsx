@@ -7,24 +7,26 @@ const getPromotion = () => {
     method: "GET",
   });
 };
-const createPromotion = () => {
+const createPromotion = (data: any) => {
     return api.makeAuthRequest({
       url: "/api/v1/promotion",
       method: "POST",
+      data,
     });
   };
 
-  const deletePromotion = () => {
+  const deletePromotion = (Id: string) => {
     return api.makeAuthRequest({
-      url: "/api/v1/promotion/2",
+      url: `/api/v1/promotion/${Id}`,
       method: "DELETE",
     });
   };
   
-  const updatePromotion = () => {
+  const updatePromotion = (Id: string, data: any) => {
     return api.makeAuthRequest({
-      url: "/api/v1/promotion/1",
+      url: `/api/v1/promotion/${Id}`,
       method: "PUT",
+      data,
     });
   };
   

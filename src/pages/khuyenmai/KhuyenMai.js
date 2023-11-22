@@ -1,27 +1,23 @@
-import { Table, Input, Card, CardTitle, Popconfirm, Form } from "antd"
-import { useState, Fragment, useEffect, useRef, useContext } from "react"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, Select } from "antd"
+import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Button,
     Row,
     Col,
-    FormFeedback,
     UncontrolledTooltip,
 } from "reactstrap"
 import { Plus, X } from "react-feather"
 import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
 import Swal from "sweetalert2"
-import {getCustomer, createCustomer, deleteCustomer, updateCustomer } from "../../../utils/services/customer"
+import {getPromotion, createPromotion, deletePromotion, updatePromotion } from "../../utils/services/promotion"
+import {productServices} from "../../utils/services/productServices "
 import withReactContent from "sweetalert2-react-content"
 
 // import { AbilityContext } from '@src/utility/context/Can'
 
 
 
-const DanhSachKhachHang = () => {
+const Promotion = () => {
     // const ability = useContext(AbilityContext)
     const [form] = Form.useForm()
 
@@ -32,13 +28,16 @@ const DanhSachKhachHang = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [idEdit, setIdEdit] = useState()
 
+    const [product, setProduct] = useState([])
+
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [action, setAction] = useState('Add')
 
     const [search, setSearch] = useState("")
     const [isAdd, setIsAdd] = useState(false)
+
     const getData = () => {
-        getCustomer({
+        getPromotion({
             params: {
                 page: currentPage,
                 limit: rowsPerPage,
@@ -53,39 +52,59 @@ const DanhSachKhachHang = () => {
                 console.log(err)
             })
     }
+
+    const getProduct = () => {
+      productServices.get({
+        params: {
+            page: currentPage,
+            limit: rowsPerPage,
+            ...(search && search !== "" && { search }),
+        },
+    })
+      .then(res => {
+        const data = res.data.data.map((item) => {
+          return {
+            value: item.id,
+            label: item.name
+          }
+        })
+        setProduct(data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
     useEffect(() => {
         getData()
+        getProduct()
     }, [currentPage, rowsPerPage, search])
+
 
     const handleModal = () => {
         setIsAdd(false)
         // setIsEdit(false)
     }
-    const CloseBtn = (
-        <X className="cursor-pointer" size={15} onClick={handleModal} />
-    )
     const handleEdit = (record) => {
-        console.log("edit", record)
+        console.log("handleEdit", record)
         form.setFieldsValue({
             name: record.name,
-            id: record.id,
-            email: record.email,
-            gender: record.gender,
-            phone_number: record.phone_number,
-            point: record.point
+            id_product: record.id_product,
         })
         setAction('Edit')
         setIsAdd(true)
-        setIdEdit(record.ID)
+        setIdEdit(record.id)
     }
     const onReset = () => {
         form.resetFields()
         handleModal()
     }
     const onFinish = (values) => {
-        console.log("values", values)
+        console.log("onFinish", values)
         if (action === 'Add') {
-            createCustomer(values)
+            createPromotion({
+                name: values.name,
+                id_product: values.id_product
+            })
                 .then((res) => {
                     MySwal.fire({
                         title: "Thêm mới thành công",
@@ -110,10 +129,7 @@ const DanhSachKhachHang = () => {
                     })
                 })
         } else {
-            updateCustomer({
-                ...values,
-                id: idEdit
-            })
+            updatePromotion(idEdit, values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Chỉnh sửa thành công",
@@ -149,14 +165,11 @@ const DanhSachKhachHang = () => {
 
    
     const handleDelete = (key) => {
-        deleteCustomer({
-            params: {
-                id: key,
-            },
-        })
+        console.log("key", key)
+        deletePromotion(key)
             .then((res) => {
                 MySwal.fire({
-                    title: "Xóa khách hàng thành công",
+                    title: "Xóa khuyến mãi thành công",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -171,7 +184,7 @@ const DanhSachKhachHang = () => {
             })
             .catch((error) => {
                 MySwal.fire({
-                    title: "Xóa khách hàng thất bại",
+                    title: "Xóa khuyến mãi thất bại",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger",
@@ -191,28 +204,28 @@ const DanhSachKhachHang = () => {
             ),
         },
         {
-            title: "Tên khách hàng",
+            title: "Tên khuyến mãi",
             dataIndex: "name",
         },
         {
-            title: "SĐT",
-            dataIndex: "phone_number",
+            title: "Sản phẩm áp dụng",
+            dataIndex: "id_product",
+            render: (text, record, index) => {
+              const matchedSchoolYear = product.find(item => item.value === record.id_product)
+              return (
+                  <span>{`${matchedSchoolYear?.label ? matchedSchoolYear.label : ""}`}</span>
+              )
+          }
         },
         {
-            title: "Giới tính",
-            dataIndex: "gender",
+            title: "Điều kiện áp dụng",
+            dataIndex: "condition",
             width: "20%",
             align: "center",
         },
         {
-            title: "Email",
-            dataIndex: "email",
-            width: "20%",
-            align: "center",
-        },
-        {
-            title: "Điểm",
-            dataIndex: "point",
+            title: "Giảm giá",
+            dataIndex: "discount",
             width: "20%",
             align: "center",
         },
@@ -237,7 +250,7 @@ const DanhSachKhachHang = () => {
                     {
                         <Popconfirm
                         title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record.ID)}
+                        onConfirm={() => handleDelete(record.id)}
                         cancelText="Hủy"
                         okText="Đồng ý"
                     >
@@ -256,9 +269,20 @@ const DanhSachKhachHang = () => {
     const showTotal = (count) => `Tổng số: ${count}`
 
     return (
-        <div className="ds_canbo">
-            <Row style={{ justifyContent: "space-between" }}>
-
+        <Card
+           
+        >
+          <Breadcrumb
+                style={{ margin: "auto",marginBottom:"14px", marginLeft: 0 }}
+                items={[
+                    {
+                        title: (
+                            <span style={{ fontWeight: "bold" }}>Danh sách các khuyến mãi</span>
+                        ),
+                    },
+                ]}
+            />
+            <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
                         className=""
@@ -298,8 +322,7 @@ const DanhSachKhachHang = () => {
                         }}
                             type="primary"
                             style={{
-                                margin: 16,
-                                padding: 10,
+                                padding: 6,
                             }}
                         >
                             Thêm mới
@@ -312,43 +335,44 @@ const DanhSachKhachHang = () => {
                 columns={columns}
                 dataSource={data}
                 bordered
-                paginame={{
-                    current: currentPage,
-                    pageSize: rowsPerPage,
-                    defaultPageSize: rowsPerPage,
-                    showSizeChanger: true,
-                    pageSizeOptions: ["10", "20", "30", '100'],
-                    total: count,
-                    locale: { items_per_page: "/ trang" },
-                    showTotal: (total, range) => <span>Tổng số: {total}</span>,
-                    onShowSizeChange: (current, pageSize) => {
-                        setCurrentPage(current)
-                        setRowsPerpage(pageSize)
-                    },
-                    onChange: (pageNumber) => {
-                        setCurrentPage(pageNumber)
-                    }
-                }}
+                pagination={{
+                  current: currentPage,
+                  pageSize: rowsPerPage,
+                  defaultPageSize: rowsPerPage,
+                  showSizeChanger: true,
+                  pageSizeOptions: ["10", "20", "30", '100'],
+                  total: count,
+                  locale: { items_per_page: "/ trang" },
+                  showTotal: (total, range) => <span>Tổng số: {total}</span>,
+                  onShowSizeChange: (current, pageSize) => {
+                      setCurrentPage(current)
+                      setRowsPerpage(pageSize)
+                  },
+                  onChange: (pageNumber) => {
+                      setCurrentPage(pageNumber)
+                  }
+              }}
             />
             <Modal
-                isOpen={isAdd}
+                open={isAdd}
                 toggle={handleModal}
+                onCancel={onReset}
                 contentClassName="pt-0"
                 autoFocus={false}
                 className="modal-md"
-            >
-                <ModalHeader
+                footer={[]}
+                    >
+                <div
                     className=""
                     toggle={handleModal}
-                    close={CloseBtn}
                     tag="div"
                 >
-                    {console.log("isOpen", handleModal)}
-                     <h4 className="modal-title">{
-                        action === 'Add' ? "Thêm mới khách hàng" : "Chỉnh sửa khách hàng"
-                    } </h4>
-                </ModalHeader>
-                <ModalBody className="flex-grow-1">
+                     <h2 className="modal-title">{
+                        action === 'Add' ? "Thêm mới khuyến mãi" : "Chỉnh sửa khuyến mãi"
+                    } </h2>
+                </div>
+                
+                <div className="flex-grow-1">
                     <Form
                         form={form}
                         name="control-hooks"
@@ -359,11 +383,11 @@ const DanhSachKhachHang = () => {
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
                                     name="name"
-                                    label="Tên khách hàng"
+                                    label="Tên khuyến mãi"
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Nhập tên khách hàng'
+                                            message: 'Nhập tên khuyến mãi'
                                         },
                                         {
                                             validator: (rule, value) => {
@@ -375,21 +399,66 @@ const DanhSachKhachHang = () => {
                                         },
                                     ]}
                                 >
-                                    <Input placeholder='Nhập tên khách hàng' />
+                                    <Input placeholder='Nhập tên khuyến mãi' />
                                 </Form.Item>
                             </div>
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
-                                    name="description"
-                                    label=" Ghi chú"
+                                    name="id_product"
+                                    label="Sản phẩm áp dụng"
+                                    rules={[
+                                      {
+                                          required: true,
+                                          message: 'Chọn sản phẩm áp dụng'
+                                      },
+                                  ]}
                                 >
-                                    <Input placeholder='Nhập ghi chú' />
+                                     <Select allowClear 
+                                         options={product} style={{width:"100%"}}  placeholder="Chọn sản phẩm"  onKeyPress={(e) => {
+                                      }}
+                                  ></Select> 
                                 </Form.Item>
 
                             </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="condition"
+                                    label="Điều kiện áp dụng"
+                                    rules={[
+                                        {
+                                            validator: (rule, value) => {
+                                                if (value && value.trim() === '') {
+                                                    return Promise.reject('Không hợp lệ')
+                                                }
+                                                return Promise.resolve()
+                                            },
+                                        },
+                                    ]}
+                                >
+                                    <Input placeholder='Nhập điều kiện áp dụng' type="number"/>
+                                </Form.Item>
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="discount"
+                                    label="Giảm giá"
+                                    rules={[
+                                        {
+                                            validator: (rule, value) => {
+                                                if (value && value.trim() === '') {
+                                                    return Promise.reject('Không hợp lệ')
+                                                }
+                                                return Promise.resolve()
+                                            },
+                                        },
+                                    ]}
+                                >
+                                    <Input placeholder='Nhập giảm giá'  type="number"/>
+                                </Form.Item>
+                            </div>
                         </Row>
                         <Form.Item style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button color="primary"
+                            <Button type="primary" htmlType="submit"
                                 className="addBtn" style={{ marginRight: '20px', width: '94px' }}>
                                 Lưu
                             </Button>
@@ -399,10 +468,9 @@ const DanhSachKhachHang = () => {
                             </Button>
                         </Form.Item>
                     </Form>
-                </ModalBody>
+                </div>
             </Modal>
-
-        </div>
-)
-                                }
-export default DanhSachKhachHang 
+                 </Card>
+    )
+}
+export default Promotion 

@@ -1,6 +1,6 @@
 import Sider from "antd/es/layout/Sider";
 import { Image, Menu } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from '../../assets/logo.png'
 import { RouterLinks } from "../../const/RouterLinks";
 import {
@@ -19,19 +19,13 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import SubMenu from "antd/es/menu/SubMenu";
+import { memo } from "react";
 
 interface props {
   collapsed: any,
   setCollapsed: any
 }
 const menuItems = [
-  {
-    key: RouterLinks.BAO_CAO_DOANH_THU,
-    label: "Tổng Quan",
-    icon: (
-      <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />
-    ),
-  },
   {
     key: "qlttb",
     label: "Báo Cáo",
@@ -173,23 +167,25 @@ const menuItems = [
 
   },
 ];
-const Sidebar = (props: props) => {
-  const { collapsed, setCollapsed } = props
+const Sidebar = () => {
   const navigate = useNavigate();
   const onClick = (e: any) => {
-    // console.log(e.key)
     navigate(e.key)
   }
-  console.log(window.location.pathname.split("/")[1] + '/' + window.location.pathname.split("/")[2])
   return (
-    <Sider width={300} trigger={null} collapsible collapsed={collapsed}>
+    <Sider style={{
+      overflow: 'auto',
+      height: '100vh',
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      bottom: 0,
+    }} width={300} trigger={null}>
       <Image src={logo} preview={false} style={{ padding: 5 }} />
       <Menu
-
         selectedKeys={['/' + window.location.pathname.split("/")[1] + '/' + window.location.pathname.split("/")[2]]}
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={['1']}
         items={menuItems}
         onClick={onClick}
       >
@@ -212,7 +208,7 @@ const Sidebar = (props: props) => {
                     key={childItem.key}
 
                   >
-                    {/* <Link to={childItem.url}>{childItem.label}</Link> */}
+                    {/* <Link to={childItem.key}>{childItem.label}</Link> */}
                     {item.label}
                   </Menu.Item>
                 ))}
@@ -225,7 +221,7 @@ const Sidebar = (props: props) => {
                 icon={item.icon}
               >
                 {item.label}
-                {/* <Link to={item.url}>{item.label}</Link> */}
+                {/* <Link to={item.key}>{item.label}</Link> */}
               </Menu.Item>
             );
           }
@@ -236,4 +232,4 @@ const Sidebar = (props: props) => {
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

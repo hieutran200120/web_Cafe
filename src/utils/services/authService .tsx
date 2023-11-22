@@ -1,38 +1,32 @@
-import createApiServices from "../createApiService";
-const api = createApiServices();
-const handleLoginApi = (loginInfo: any) => {
-  return api.makeAuthRequest({
-    url: "/api/v1/auth/login",
+
+import CreateApiService from "../createApiService";
+
+const api = CreateApiService();
+
+const login = (data: any) => {
+  return api.makeRequest({
+    url: `/api/v1/auth/login`,
     method: "POST",
-    data: loginInfo,
+    data: data
   });
 };
 
-const handleRegister = (regisInfo: any) => {
-  return api.makeAuthRequest({
-    url: "/api/Authorization/Registration",
+const register = (data: any) => {
+  return api.makeRequest({
+    url: `/api/v1/auth/register`,
     method: "POST",
-    data: regisInfo,
+    data: data
   });
 };
 
-const handleRevoke = () => {
-  return api.makeAuthRequest({
-    url: "/api/Token/Revoke",
+const changepassword = (data: any) => {
+  return api.makeRequest({
+    url: "/api/v1/auth/change-password",
     method: "POST",
+    data: data,
   });
 };
 
-const handleRefreshToken = (data: any) => {
-  return api.makeAuthRequest({
-    url: "/api/Token/Refresh",
-    method: "POST",
-    data,
-  });
-};
-export const authService = {
-  handleLoginApi,
-  handleRegister,
-  handleRevoke,
-  handleRefreshToken,
+export const authServices = {
+  login, register, changepassword
 };

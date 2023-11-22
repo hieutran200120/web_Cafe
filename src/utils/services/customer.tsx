@@ -7,24 +7,26 @@ const getCustomer = () => {
     method: "GET",
   });
 };
-const createCustomer = () => {
+const createCustomer = (data: any) => {
     return api.makeAuthRequest({
       url: "/api/v1/customer",
       method: "POST",
+      data,
     });
   };
 
-  const deleteCustomer = () => {
+  const deleteCustomer = (Id: string) => {
     return api.makeAuthRequest({
-      url: "/api/v1/customer/2",
-      method: "GET",
+      url: `/api/v1/customer/${Id}`,
+      method: "DELETE",
     });
   };
   
-  const updateCustomer = () => {
+  const updateCustomer = (Id: string, data: any) => {
     return api.makeAuthRequest({
-      url: "/api/v1/customer/1",
-      method: "GET",
+      url: `/api/v1/customer/${Id}`,
+      method: "PUT",
+      data,
     });
   };
   

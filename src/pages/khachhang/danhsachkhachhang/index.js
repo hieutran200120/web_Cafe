@@ -1,14 +1,9 @@
-import { Table, Input, Card, CardTitle, Tag, Popconfirm, Form } from "antd"
-import { useState, Fragment, useEffect, useRef, useContext } from "react"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, Select } from "antd"
+import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Button,
     Row,
     Col,
-    FormFeedback,
     UncontrolledTooltip,
 } from "reactstrap"
 import { Plus, X } from "react-feather"
@@ -32,11 +27,19 @@ const DanhSachKhachHang = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [idEdit, setIdEdit] = useState()
 
+    const [product, setProduct] = useState([])
+
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [action, setAction] = useState('Add')
 
     const [search, setSearch] = useState("")
     const [isAdd, setIsAdd] = useState(false)
+
+    const gender = [
+        { value: 1, label: 'Nữ' },
+        { value: 0, label: 'Nam' }
+      ]
+
     const getData = () => {
         getCustomer({
             params: {
@@ -57,35 +60,27 @@ const DanhSachKhachHang = () => {
         getData()
     }, [currentPage, rowsPerPage, search])
 
+
     const handleModal = () => {
         setIsAdd(false)
         // setIsEdit(false)
     }
-    const CloseBtn = (
-        <X className="cursor-pointer" size={15} onClick={handleModal} />
-    )
     const handleEdit = (record) => {
-        console.log("edit", record)
-        form.setFieldsValue({
-            name: record.name,
-            id: record.id,
-            email: record.email,
-            gender: record.gender,
-            phone_number: record.phone_number,
-            point: record.point
-        })
+        form.setFieldsValue(record)
         setAction('Edit')
         setIsAdd(true)
-        setIdEdit(record.ID)
+        setIdEdit(record.id)
     }
     const onReset = () => {
         form.resetFields()
         handleModal()
     }
     const onFinish = (values) => {
-        console.log("values", values)
         if (action === 'Add') {
-            createCustomer(values)
+            createCustomer({
+                name: values.name,
+                id_product: values.id_product
+            })
                 .then((res) => {
                     MySwal.fire({
                         title: "Thêm mới thành công",
@@ -110,10 +105,7 @@ const DanhSachKhachHang = () => {
                     })
                 })
         } else {
-            updateCustomer({
-                ...values,
-                id: idEdit
-            })
+            updateCustomer(idEdit, values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Chỉnh sửa thành công",
@@ -149,11 +141,8 @@ const DanhSachKhachHang = () => {
 
    
     const handleDelete = (key) => {
-        deleteCustomer({
-            params: {
-                id: key,
-            },
-        })
+        console.log("key", key)
+        deleteCustomer(key)
             .then((res) => {
                 MySwal.fire({
                     title: "Xóa khách hàng thành công",
@@ -237,7 +226,7 @@ const DanhSachKhachHang = () => {
                     {
                         <Popconfirm
                         title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record.ID)}
+                        onConfirm={() => handleDelete(record.id)}
                         cancelText="Hủy"
                         okText="Đồng ý"
                     >
@@ -253,15 +242,21 @@ const DanhSachKhachHang = () => {
             ),
         },
     ]
-    const showTotal = (count) => `Tổng số: ${count}`
-
     return (
         <Card
-            title="Danh sách khách hàng"
-            style={{ backgroundColor: "white", width: "100%", height: "100%" }}
+           
         >
-            <Row style={{ justifyContent: "space-between" }}>
-
+          <Breadcrumb
+                style={{ margin: "auto",marginBottom:"14px", marginLeft: 0 }}
+                items={[
+                    {
+                        title: (
+                            <span style={{ fontWeight: "bold" }}>Danh sách khách hàng</span>
+                        ),
+                    },
+                ]}
+            />
+            <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
                         className=""
@@ -301,8 +296,7 @@ const DanhSachKhachHang = () => {
                         }}
                             type="primary"
                             style={{
-                                margin: 16,
-                                padding: 10,
+                                padding: 6,
                             }}
                         >
                             Thêm mới
@@ -315,51 +309,50 @@ const DanhSachKhachHang = () => {
                 columns={columns}
                 dataSource={data}
                 bordered
-                paginame={{
-                    current: currentPage,
-                    pageSize: rowsPerPage,
-                    defaultPageSize: rowsPerPage,
-                    showSizeChanger: true,
-                    pageSizeOptions: ["10", "20", "30", '100'],
-                    total: count,
-                    locale: { items_per_page: "/ trang" },
-                    showTotal: (total, range) => <span>Tổng số: {total}</span>,
-                    onShowSizeChange: (current, pageSize) => {
-                        setCurrentPage(current)
-                        setRowsPerpage(pageSize)
-                    },
-                    onChange: (pageNumber) => {
-                        setCurrentPage(pageNumber)
-                    }
-                }}
+                pagination={{
+                  current: currentPage,
+                  pageSize: rowsPerPage,
+                  defaultPageSize: rowsPerPage,
+                  showSizeChanger: true,
+                  pageSizeOptions: ["10", "20", "30", '100'],
+                  total: count,
+                  locale: { items_per_page: "/ trang" },
+                  showTotal: (total, range) => <span>Tổng số: {total}</span>,
+                  onShowSizeChange: (current, pageSize) => {
+                      setCurrentPage(current)
+                      setRowsPerpage(pageSize)
+                  },
+                  onChange: (pageNumber) => {
+                      setCurrentPage(pageNumber)
+                  }
+              }}
             />
-
             <Modal
-                isOpen={isAdd}
+                open={isAdd}
                 toggle={handleModal}
+                onCancel={onReset}
                 contentClassName="pt-0"
                 autoFocus={false}
                 className="modal-md"
-            >
-                <ModalHeader
+                footer={[]}
+                    >
+                <div
                     className=""
                     toggle={handleModal}
-                    close={CloseBtn}
                     tag="div"
                 >
-                    {console.log("isOpen", handleModal)}
-                     <h4 className="modal-title">{
+                     <h2 className="modal-title">{
                         action === 'Add' ? "Thêm mới khách hàng" : "Chỉnh sửa khách hàng"
-                    } </h4>
-                </ModalHeader>
-                <ModalBody className="flex-grow-1">
+                    } </h2>
+                </div>
+                
+                <div className="flex-grow-1">
                     <Form
                         form={form}
                         name="control-hooks"
                         onFinish={onFinish}
                         layout="vertical"
                     ><Row>
-
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
                                     name="name"
@@ -382,18 +375,68 @@ const DanhSachKhachHang = () => {
                                     <Input placeholder='Nhập tên khách hàng' />
                                 </Form.Item>
                             </div>
-                            <div className=' col col-12'>
+                            <div className=' col col-6'>
                                 <Form.Item style={{ marginBottom: '4px' }}
-                                    name="description"
-                                    label=" Ghi chú"
+                                    name="gender"
+                                    label="Giới tính"
+                                    rules={[
+                                      {
+                                          required: true,
+                                          message: 'Vui lòng chọn giới tính'
+                                      },
+                                  ]}
                                 >
-                                    <Input placeholder='Nhập ghi chú' />
+                                    <Select
+                                        allowClear
+                                        options={gender} style={{width:"100%"}} placeholder="Chọn giới tính" >
+
+                                        </Select>
                                 </Form.Item>
 
                             </div>
+                            <div className=' col col-6'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="phone_number"
+                                    label="Số điện thoại"
+                                    rules={[
+                                      {
+                                          required: true,
+                                          message: 'Số điện thoại'
+                                      },
+                                  ]}
+                                >
+                                    <Input placeholder='Nhập số điện thoại' />
+                                </Form.Item>
+
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="email"
+                                    label="Email"
+                                    rules={[
+                                      {
+                                          required: true,
+                                          message: 'Vui lòng nhập email'
+                                      },
+                                  ]}
+                                >
+                                    <Input placeholder='Nhập email' />
+                                </Form.Item>
+
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="point"
+                                    label="Điểm tích luỹ"
+                                   
+                                >
+                                    <Input placeholder='Nhập điểm tích luỹ' type="number"/>
+                                </Form.Item>
+                            </div>
+                            
                         </Row>
-                        <Form.Item style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button color="primary"
+                        <Form.Item style={{ display: 'flex', justifyContent: 'center', marginTop:'15px'}}>
+                            <Button type="primary" htmlType="submit"
                                 className="addBtn" style={{ marginRight: '20px', width: '94px' }}>
                                 Lưu
                             </Button>
@@ -403,7 +446,7 @@ const DanhSachKhachHang = () => {
                             </Button>
                         </Form.Item>
                     </Form>
-                </ModalBody>
+                </div>
             </Modal>
                  </Card>
     )
