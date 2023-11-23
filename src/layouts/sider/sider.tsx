@@ -144,10 +144,6 @@ const menuItems = [
         label: "Nhập kho ",
       },
       {
-        key: RouterLinks.XUAT_KHO,
-        label: "xuất kho",
-      },
-      {
         key: RouterLinks.KIEM_KE,
         label: "Kiểm kê kho",
       },

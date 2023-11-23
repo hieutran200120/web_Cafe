@@ -17,7 +17,6 @@ import DatBan from "../pages/datban/DatBan";
 import DanhSachKhachHang from "../pages/khachhang/danhsachkhachhang";
 import TonKho from "../pages/kho/TonKho";
 import NhapKho from "../pages/kho/NhapKho";
-import XuatKho from "../pages/kho/XuatKho";
 import KiemKe from "../pages/kho/KiemKe";
 import NhanVien from "../pages/baocao/NhanVien";
 export const router = createBrowserRouter([
@@ -85,10 +84,6 @@ export const router = createBrowserRouter([
       {
         path: RouterLinks.NHAP_KHO,
         element: <NhapKho />,
-      },
-      {
-        path: RouterLinks.XUAT_KHO,
-        element: <XuatKho />,
       },
       {
         path: RouterLinks.KIEM_KE,

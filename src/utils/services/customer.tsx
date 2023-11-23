@@ -1,12 +1,13 @@
 import createApiServices from "../createApiService";
 const api = createApiServices();
 
-const getCustomer = () => {
+const getCustomer = (params: any,) => {
   return api.makeAuthRequest({
-    url: "/api/v1/customer",
+    url: `/api/v1/customer?search=${params.search}`,
     method: "GET",
   });
 };
+
 const createCustomer = (data: any) => {
     return api.makeAuthRequest({
       url: "/api/v1/customer",

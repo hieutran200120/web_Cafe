@@ -1,30 +1,22 @@
-import { Table, Input, Card, CardTitle, Popconfirm, Form } from "antd"
-import { useState, Fragment, useEffect, useRef, useContext } from "react"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, DatePicker } from "antd"
+import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Button,
     Row,
     Col,
-    FormFeedback,
     UncontrolledTooltip,
 } from "reactstrap"
-import { Plus, X } from "react-feather"
+import moment from 'moment'
 import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
 import Swal from "sweetalert2"
-import {getCustomer, createCustomer, deleteCustomer, updateCustomer } from "../../../utils/services/customer"
+import {getMaterial, createMaterial, deleteMaterial, updateMaterial } from "../../utils/services/material"
+import { toDateString } from "../../utils/dateString"
 import withReactContent from "sweetalert2-react-content"
 
-// import { AbilityContext } from '@src/utility/context/Can'
-
-
-
-const DanhSachKhachHang = () => {
+const TonKho = () => {
     // const ability = useContext(AbilityContext)
     const [form] = Form.useForm()
-
+    
     const selected = useRef()
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -32,17 +24,20 @@ const DanhSachKhachHang = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [idEdit, setIdEdit] = useState()
 
+    const [product, setProduct] = useState([])
+
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [action, setAction] = useState('Add')
 
     const [search, setSearch] = useState("")
     const [isAdd, setIsAdd] = useState(false)
+
     const getData = () => {
-        getCustomer({
+        getMaterial({
             params: {
                 page: currentPage,
                 limit: rowsPerPage,
-                search: search,
+                ...(search && search !== "" && { search }),
             },
         })
             .then((res) => {
@@ -53,29 +48,21 @@ const DanhSachKhachHang = () => {
                 console.log(err)
             })
     }
+
+   
     useEffect(() => {
         getData()
     }, [currentPage, rowsPerPage, search])
 
+
     const handleModal = () => {
         setIsAdd(false)
-        // setIsEdit(false)
     }
-    const CloseBtn = (
-        <X className="cursor-pointer" size={15} onClick={handleModal} />
-    )
     const handleEdit = (record) => {
-        form.setFieldsValue({
-            name: record.name,
-            id: record.id,
-            email: record.email,
-            gender: record.gender,
-            phone_number: record.phone_number,
-            point: record.point
-        })
+        form.setFieldsValue(record)
         setAction('Edit')
         setIsAdd(true)
-        setIdEdit(record.ID)
+        setIdEdit(record.id)
     }
     const onReset = () => {
         form.resetFields()
@@ -83,7 +70,7 @@ const DanhSachKhachHang = () => {
     }
     const onFinish = (values) => {
         if (action === 'Add') {
-            createCustomer(values)
+            createMaterial(values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Thêm mới thành công",
@@ -108,10 +95,7 @@ const DanhSachKhachHang = () => {
                     })
                 })
         } else {
-            updateCustomer({
-                ...values,
-                id: idEdit
-            })
+            updateMaterial(idEdit, values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Chỉnh sửa thành công",
@@ -138,23 +122,11 @@ const DanhSachKhachHang = () => {
         }
 
     }
-    const callEdit = (data) => {
-        const dataSubmit = {
-            ...selected.current,
-            ...data,
-        }
-    }
-
-   
     const handleDelete = (key) => {
-        deleteCustomer({
-            params: {
-                id: key,
-            },
-        })
+        deleteMaterial(key)
             .then((res) => {
                 MySwal.fire({
-                    title: "Xóa khách hàng thành công",
+                    title: "Xóa lượng nguyên liệu  thành công",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -169,7 +141,7 @@ const DanhSachKhachHang = () => {
             })
             .catch((error) => {
                 MySwal.fire({
-                    title: "Xóa khách hàng thất bại",
+                    title: "Xóa lượng nguyên liệu  thất bại",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger",
@@ -189,29 +161,34 @@ const DanhSachKhachHang = () => {
             ),
         },
         {
-            title: "Tên khách hàng",
+            title: "Tên nguyên liệu ",
             dataIndex: "name",
         },
         {
-            title: "SĐT",
-            dataIndex: "phone_number",
+            title: "Số lượng",
+            dataIndex: "amount"
         },
         {
-            title: "Giới tính",
-            dataIndex: "gender",
+            title: "Đơn vị tính",
+            dataIndex: "unit",
             width: "20%",
             align: "center",
         },
         {
-            title: "Email",
-            dataIndex: "email",
-            width: "20%",
+            title: "Ngày hết hạn",
+            dataIndex: "expriation_date",
             align: "center",
+            render: (text, record, index) => {
+                console.log("ex", record.expriation_date)
+                const formattedDate = moment(record.expriation_date).format("YYYY-MM-DD");
+                return(
+                    <span>{formattedDate}</span>
+                )
+            }
         },
         {
-            title: "Điểm",
-            dataIndex: "point",
-            width: "20%",
+            title: "Mô tả",
+            dataIndex: "description",
             align: "center",
         },
         {
@@ -235,7 +212,7 @@ const DanhSachKhachHang = () => {
                     {
                         <Popconfirm
                         title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record.ID)}
+                        onConfirm={() => handleDelete(record.id)}
                         cancelText="Hủy"
                         okText="Đồng ý"
                     >
@@ -251,12 +228,21 @@ const DanhSachKhachHang = () => {
             ),
         },
     ]
-    const showTotal = (count) => `Tổng số: ${count}`
-
     return (
-        <div className="ds_canbo">
-            <Row style={{ justifyContent: "space-between" }}>
-
+        <Card
+           
+        >
+          <Breadcrumb
+                style={{ margin: "auto",marginBottom:"14px", marginLeft: 0 }}
+                items={[
+                    {
+                        title: (
+                            <span style={{ fontWeight: "bold" }}>Danh sách các nguyên liệu còn trong kho </span>
+                        ),
+                    },
+                ]}
+            />
+            <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
                         className=""
@@ -268,11 +254,11 @@ const DanhSachKhachHang = () => {
                             alignItems: "center",
                         }}
                     >
-                        Tìm kiếm
+                        Tìm kiếm 
                     </Label>
                     <Input
                         type="text"
-                        placeholder="Tìm kiếm"
+                        placeholder="Tên nguyên liệu"
                         style={{ height: "35px" }}
                         onChange={(e) => {
                             if (e.target.value === "") {
@@ -295,10 +281,6 @@ const DanhSachKhachHang = () => {
                             setIsAdd(true)
                         }}
                             type="primary"
-                            style={{
-                                margin: 16,
-                                padding: 10,
-                            }}
                         >
                             Thêm mới
                         </Button>
@@ -310,42 +292,44 @@ const DanhSachKhachHang = () => {
                 columns={columns}
                 dataSource={data}
                 bordered
-                paginame={{
-                    current: currentPage,
-                    pageSize: rowsPerPage,
-                    defaultPageSize: rowsPerPage,
-                    showSizeChanger: true,
-                    pageSizeOptions: ["10", "20", "30", '100'],
-                    total: count,
-                    locale: { items_per_page: "/ trang" },
-                    showTotal: (total, range) => <span>Tổng số: {total}</span>,
-                    onShowSizeChange: (current, pageSize) => {
-                        setCurrentPage(current)
-                        setRowsPerpage(pageSize)
-                    },
-                    onChange: (pageNumber) => {
-                        setCurrentPage(pageNumber)
-                    }
-                }}
+                pagination={{
+                  current: currentPage,
+                  pageSize: rowsPerPage,
+                  defaultPageSize: rowsPerPage,
+                  showSizeChanger: true,
+                  pageSizeOptions: ["10", "20", "30", '100'],
+                  total: count,
+                  locale: { items_per_page: "/ trang" },
+                  showTotal: (total, range) => <span>Tổng số: {total}</span>,
+                  onShowSizeChange: (current, pageSize) => {
+                      setCurrentPage(current)
+                      setRowsPerpage(pageSize)
+                  },
+                  onChange: (pageNumber) => {
+                      setCurrentPage(pageNumber)
+                  }
+              }}
             />
             <Modal
-                isOpen={isAdd}
+                open={isAdd}
                 toggle={handleModal}
+                onCancel={onReset}
                 contentClassName="pt-0"
                 autoFocus={false}
                 className="modal-md"
-            >
-                <ModalHeader
+                footer={[]}
+                    >
+                <div
                     className=""
                     toggle={handleModal}
-                    close={CloseBtn}
                     tag="div"
                 >
-                     <h4 className="modal-title">{
-                        action === 'Add' ? "Thêm mới khách hàng" : "Chỉnh sửa khách hàng"
-                    } </h4>
-                </ModalHeader>
-                <ModalBody className="flex-grow-1">
+                     <h2 className="modal-title">{
+                        action === 'Add' ? "Thêm mới nguyên liệu " : "Chỉnh sửa nguyên liệu "
+                    } </h2>
+                </div>
+                
+                <div className="flex-grow-1">
                     <Form
                         form={form}
                         name="control-hooks"
@@ -356,37 +340,100 @@ const DanhSachKhachHang = () => {
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
                                     name="name"
-                                    label="Tên khách hàng"
+                                    label="Tên nguyên liệu "
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Nhập tên khách hàng'
+                                            message: 'Nhập tên nguyên liệu '
                                         },
                                         {
                                             validator: (rule, value) => {
                                                 if (value && value.trim() === '') {
-                                                    return Promise.reject('Không được nhập toàn dấu cách')
+                                                    return Promise.reject('Không hợp lệ')
                                                 }
                                                 return Promise.resolve()
                                             },
                                         },
                                     ]}
                                 >
-                                    <Input placeholder='Nhập tên khách hàng' />
+                                    <Input placeholder='Nhập tên nguyên liệu ' />
+                                </Form.Item>
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="amount"
+                                    label="Số lượng"
+                                    rules={[
+                                      {
+                                          required: true,
+                                          message: 'Vui lòng nhập số lượng'
+                                      },
+                                  ]}
+                                >
+                                    <Input placeholder='Nhập số lượng ' />
+                                </Form.Item>
+
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="unit"
+                                    label="Đơn vị tính"
+                                    rules={[
+                                        {
+                                            validator: (rule, value) => {
+                                                if (value && value.trim() === '') {
+                                                    return Promise.reject('Không hợp lệ')
+                                                }
+                                                return Promise.resolve()
+                                            },
+                                        },
+                                    ]}
+                                >
+                                    <Input placeholder='Nhập đơn vị tính'/>
+                                </Form.Item>
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="expriation_date"
+                                    label="Ngày hết hạn"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng chọn ngày hết hạn'
+                                        },
+                                    ]}
+                                >
+                                    <DatePicker
+                                        size='large'
+                                        style={{
+                                            width: "100%",
+                                            height: " 34px"
+                                        }}
+                                        placeholder="Ngày hết hạn"
+                                        />
                                 </Form.Item>
                             </div>
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
                                     name="description"
-                                    label=" Ghi chú"
+                                    label="Mô tả"
+                                    rules={[
+                                        {
+                                            validator: (rule, value) => {
+                                                if (value && value.trim() === '') {
+                                                    return Promise.reject('Không hợp lệ')
+                                                }
+                                                return Promise.resolve()
+                                            },
+                                        },
+                                    ]}
                                 >
-                                    <Input placeholder='Nhập ghi chú' />
+                                    <Input placeholder='Nhập mô tả'/>
                                 </Form.Item>
-
                             </div>
                         </Row>
                         <Form.Item style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button color="primary"
+                            <Button type="primary" htmlType="submit"
                                 className="addBtn" style={{ marginRight: '20px', width: '94px' }}>
                                 Lưu
                             </Button>
@@ -396,10 +443,9 @@ const DanhSachKhachHang = () => {
                             </Button>
                         </Form.Item>
                     </Form>
-                </ModalBody>
+                </div>
             </Modal>
-
-        </div>
-)
-                                }
-export default DanhSachKhachHang 
+                 </Card>
+    )
+}
+export default TonKho 

@@ -85,7 +85,6 @@ const Promotion = () => {
         // setIsEdit(false)
     }
     const handleEdit = (record) => {
-        console.log("handleEdit", record)
         form.setFieldsValue({
             name: record.name,
             id_product: record.id_product,
@@ -99,7 +98,6 @@ const Promotion = () => {
         handleModal()
     }
     const onFinish = (values) => {
-        console.log("onFinish", values)
         if (action === 'Add') {
             createPromotion({
                 name: values.name,
@@ -165,7 +163,6 @@ const Promotion = () => {
 
    
     const handleDelete = (key) => {
-        console.log("key", key)
         deletePromotion(key)
             .then((res) => {
                 MySwal.fire({
@@ -321,9 +318,6 @@ const Promotion = () => {
                             setIsAdd(true)
                         }}
                             type="primary"
-                            style={{
-                                padding: 6,
-                            }}
                         >
                             Thêm mới
                         </Button>

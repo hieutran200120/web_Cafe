@@ -11,6 +11,7 @@ import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
 import Swal from "sweetalert2"
 import {getCustomer, createCustomer, deleteCustomer, updateCustomer } from "../../../utils/services/customer"
 import withReactContent from "sweetalert2-react-content"
+import { react } from "@babel/types"
 
 // import { AbilityContext } from '@src/utility/context/Can'
 
@@ -40,13 +41,11 @@ const DanhSachKhachHang = () => {
         { value: 0, label: 'Nam' }
       ]
 
-    const getData = () => {
+    const getData = () => { 
         getCustomer({
-            params: {
                 page: currentPage,
-                limit: rowsPerPage,
-                ...(search && search !== "" && { search }),
-            },
+                size: rowsPerPage,
+                search: search,
         })
             .then((res) => {
                 setData(res.data.data)
@@ -141,7 +140,6 @@ const DanhSachKhachHang = () => {
 
    
     const handleDelete = (key) => {
-        console.log("key", key)
         deleteCustomer(key)
             .then((res) => {
                 MySwal.fire({
@@ -192,6 +190,12 @@ const DanhSachKhachHang = () => {
             dataIndex: "gender",
             width: "20%",
             align: "center",
+            render: (text, record, index) => {
+                    const gender1 = gender.find(item => item.value === record.gender)
+                    return (
+                        <span>{`${gender1?.label ? gender1.label : ""}`}</span>
+                    )
+                }
         },
         {
             title: "Email",
@@ -295,9 +299,6 @@ const DanhSachKhachHang = () => {
                             setIsAdd(true)
                         }}
                             type="primary"
-                            style={{
-                                padding: 6,
-                            }}
                         >
                             Thêm mới
                         </Button>

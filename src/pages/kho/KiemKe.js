@@ -1,30 +1,22 @@
-import { Table, Input, Card, CardTitle, Popconfirm, Form } from "antd"
-import { useState, Fragment, useEffect, useRef, useContext } from "react"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, DatePicker, Select } from "antd"
+import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Button,
     Row,
     Col,
-    FormFeedback,
     UncontrolledTooltip,
 } from "reactstrap"
-import { Plus, X } from "react-feather"
+import moment from 'moment'
 import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
 import Swal from "sweetalert2"
-import {getCustomer, createCustomer, deleteCustomer, updateCustomer } from "../../../utils/services/customer"
+import {getDeChInventory, createDeChInventory, deleteDeChInventory, updateDeChInventory } from "../../utils/services/detailCheckInventory"
+import { getMaterial } from "../../utils/services/material"
+import { getChInventory } from "../../utils/services/checkInventory"
 import withReactContent from "sweetalert2-react-content"
 
-// import { AbilityContext } from '@src/utility/context/Can'
-
-
-
-const DanhSachKhachHang = () => {
+const KiemKe = () => {
     // const ability = useContext(AbilityContext)
     const [form] = Form.useForm()
-
     const selected = useRef()
     const MySwal = withReactContent(Swal)
     const [data, setData] = useState([])
@@ -32,17 +24,20 @@ const DanhSachKhachHang = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [idEdit, setIdEdit] = useState()
 
+    const [material, setMaterial] = useState([])
+    const [checkInventory, setCheckInventory] = useState([])
+
     const [rowsPerPage, setRowsPerpage] = useState(10)
     const [action, setAction] = useState('Add')
 
-    const [search, setSearch] = useState("")
+    const [search, setSearch] = useState("1")
     const [isAdd, setIsAdd] = useState(false)
+
     const getData = () => {
-        getCustomer({
+        getDeChInventory({
             params: {
                 page: currentPage,
                 limit: rowsPerPage,
-                search: search,
             },
         })
             .then((res) => {
@@ -53,29 +48,81 @@ const DanhSachKhachHang = () => {
                 console.log(err)
             })
     }
+
+    const getAllMaterial = () => {
+        getMaterial({
+            params: {
+                page: currentPage,
+                limit: rowsPerPage,
+            },
+        })
+            .then((res) => {
+                const data = res.data.data.map((item) => {
+                    return {
+                        value: item.id,
+                        label: item.name
+                    }
+                })
+                setMaterial(data)})
+                .catch((err) => {
+                  console.log(err)
+                })
+              }
+            //   const getCheckInventory = () => {
+            //     getMaterial({
+            //         params: {
+            //             page: currentPage,
+            //             limit: rowsPerPage,
+            //         },
+            //     })
+            //         .then((res) => {
+            //             const data = res.data.data.map((item) => {
+            //                 return {
+            //                     value: item.id,
+            //                     label: item.name
+            //                 }
+            //             })
+            //             setMaterial(data)})
+            //             .catch((err) => {
+            //               console.log(err)
+            //             })
+            //           }
+              const getCheckInventory = () => {
+                getChInventory({
+                    params: {
+                        page: currentPage,
+                        limit: rowsPerPage,
+                    },
+                })
+                    .then((res) => {
+                        const data = res.data.data.map((item) => {
+                            return {
+                                value: item.id,
+                                label: item.time_check
+                            }
+                        })
+                        setCheckInventory(data)})
+                        .catch((err) => {
+                          console.log(err)
+                        })
+                      }
     useEffect(() => {
         getData()
-    }, [currentPage, rowsPerPage, search])
+        getCheckInventory()
+        getAllMaterial()
+    }, [currentPage, rowsPerPage])
+
+
 
     const handleModal = () => {
         setIsAdd(false)
         // setIsEdit(false)
     }
-    const CloseBtn = (
-        <X className="cursor-pointer" size={15} onClick={handleModal} />
-    )
     const handleEdit = (record) => {
-        form.setFieldsValue({
-            name: record.name,
-            id: record.id,
-            email: record.email,
-            gender: record.gender,
-            phone_number: record.phone_number,
-            point: record.point
-        })
+        form.setFieldsValue(record)
         setAction('Edit')
         setIsAdd(true)
-        setIdEdit(record.ID)
+        setIdEdit(record.id)
     }
     const onReset = () => {
         form.resetFields()
@@ -83,7 +130,7 @@ const DanhSachKhachHang = () => {
     }
     const onFinish = (values) => {
         if (action === 'Add') {
-            createCustomer(values)
+            createDeChInventory(values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Thêm mới thành công",
@@ -108,10 +155,7 @@ const DanhSachKhachHang = () => {
                     })
                 })
         } else {
-            updateCustomer({
-                ...values,
-                id: idEdit
-            })
+            updateDeChInventory(idEdit, values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Chỉnh sửa thành công",
@@ -147,14 +191,10 @@ const DanhSachKhachHang = () => {
 
    
     const handleDelete = (key) => {
-        deleteCustomer({
-            params: {
-                id: key,
-            },
-        })
+        deleteDeChInventory(key)
             .then((res) => {
                 MySwal.fire({
-                    title: "Xóa khách hàng thành công",
+                    title: "Xóalịch sử tồn kho thành công",
                     icon: "success",
                     customClass: {
                         confirmButton: "btn btn-success",
@@ -169,7 +209,7 @@ const DanhSachKhachHang = () => {
             })
             .catch((error) => {
                 MySwal.fire({
-                    title: "Xóa khách hàng thất bại",
+                    title: "Xóalịch sử tồn kho thất bại",
                     icon: "error",
                     customClass: {
                         confirmButton: "btn btn-danger",
@@ -189,28 +229,41 @@ const DanhSachKhachHang = () => {
             ),
         },
         {
-            title: "Tên khách hàng",
-            dataIndex: "name",
+            title: "Tên vật liệu được kiểm kê ",
+            dataIndex: "id_material",
+            render: (text, record, index) => {
+                const materialLabel = material.find(item => item.value === record.id_material)
+                return (
+                    <span>{`${materialLabel?.label ? materialLabel.label : ""}`}</span>
+                )
+            }
         },
         {
-            title: "SĐT",
-            dataIndex: "phone_number",
+            title: "Thời giam kiểm kê",
+            dataIndex: "id_detail_check",
+            render: (text, record, index) => {
+                const x = checkInventory.find(item => item.value === record.id_detail_check)
+                const formattedDate = moment(x).format("DD-MM-YYYY");
+                return(
+                    <span>{formattedDate}</span>
+                )
+            }
         },
         {
-            title: "Giới tính",
-            dataIndex: "gender",
+            title: "Số lượng lý thuyết",
+            dataIndex: "total_count",
             width: "20%",
             align: "center",
         },
         {
-            title: "Email",
-            dataIndex: "email",
+            title: "Số lượng thực tế",
+            dataIndex: "shortage_count",
             width: "20%",
             align: "center",
         },
-        {
-            title: "Điểm",
-            dataIndex: "point",
+        {   
+            title: "Số lượng chênh lệch",
+            dataIndex: "actual_count",
             width: "20%",
             align: "center",
         },
@@ -235,7 +288,7 @@ const DanhSachKhachHang = () => {
                     {
                         <Popconfirm
                         title="Bạn chắc chắn xóa?"
-                        onConfirm={() => handleDelete(record.ID)}
+                        onConfirm={() => handleDelete(record.id)}
                         cancelText="Hủy"
                         okText="Đồng ý"
                     >
@@ -251,12 +304,21 @@ const DanhSachKhachHang = () => {
             ),
         },
     ]
-    const showTotal = (count) => `Tổng số: ${count}`
-
     return (
-        <div className="ds_canbo">
-            <Row style={{ justifyContent: "space-between" }}>
-
+        <Card
+           
+        >
+          <Breadcrumb
+                style={{ margin: "auto",marginBottom:"14px", marginLeft: 0 }}
+                items={[
+                    {
+                        title: (
+                            <span style={{ fontWeight: "bold" }}>Danh sách lịch sử tồn kho</span>
+                        ),
+                    },
+                ]}
+            />
+            <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
                         className=""
@@ -295,10 +357,6 @@ const DanhSachKhachHang = () => {
                             setIsAdd(true)
                         }}
                             type="primary"
-                            style={{
-                                margin: 16,
-                                padding: 10,
-                            }}
                         >
                             Thêm mới
                         </Button>
@@ -310,42 +368,44 @@ const DanhSachKhachHang = () => {
                 columns={columns}
                 dataSource={data}
                 bordered
-                paginame={{
-                    current: currentPage,
-                    pageSize: rowsPerPage,
-                    defaultPageSize: rowsPerPage,
-                    showSizeChanger: true,
-                    pageSizeOptions: ["10", "20", "30", '100'],
-                    total: count,
-                    locale: { items_per_page: "/ trang" },
-                    showTotal: (total, range) => <span>Tổng số: {total}</span>,
-                    onShowSizeChange: (current, pageSize) => {
-                        setCurrentPage(current)
-                        setRowsPerpage(pageSize)
-                    },
-                    onChange: (pageNumber) => {
-                        setCurrentPage(pageNumber)
-                    }
-                }}
+                pagination={{
+                  current: currentPage,
+                  pageSize: rowsPerPage,
+                  defaultPageSize: rowsPerPage,
+                  showSizeChanger: true,
+                  pageSizeOptions: ["10", "20", "30", '100'],
+                  total: count,
+                  locale: { items_per_page: "/ trang" },
+                  showTotal: (total, range) => <span>Tổng số: {total}</span>,
+                  onShowSizeChange: (current, pageSize) => {
+                      setCurrentPage(current)
+                      setRowsPerpage(pageSize)
+                  },
+                  onChange: (pageNumber) => {
+                      setCurrentPage(pageNumber)
+                  }
+              }}
             />
             <Modal
-                isOpen={isAdd}
+                open={isAdd}
                 toggle={handleModal}
+                onCancel={onReset}
                 contentClassName="pt-0"
                 autoFocus={false}
                 className="modal-md"
-            >
-                <ModalHeader
+                footer={[]}
+                    >
+                <div
                     className=""
                     toggle={handleModal}
-                    close={CloseBtn}
                     tag="div"
                 >
-                     <h4 className="modal-title">{
-                        action === 'Add' ? "Thêm mới khách hàng" : "Chỉnh sửa khách hàng"
-                    } </h4>
-                </ModalHeader>
-                <ModalBody className="flex-grow-1">
+                     <h2 className="modal-title">{
+                        action === 'Add' ? "Thêm mớilịch sử tồn kho" : "Chỉnh sửalịch sử tồn kho"
+                    } </h2>
+                </div>
+                
+                <div className="flex-grow-1">
                     <Form
                         form={form}
                         name="control-hooks"
@@ -355,38 +415,79 @@ const DanhSachKhachHang = () => {
 
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
-                                    name="name"
-                                    label="Tên khách hàng"
+                                    name="id_material"
+                                    label="Tên vật liệu kiểm kê "
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Nhập tên khách hàng'
-                                        },
+                                            message: 'Nhập tên vật liệu kiểm kê '
+                                        }, 
+                                    ]}
+                                >
+                                    <Select
+                                        allowClear
+                                        options={material} style={{width:"100%"}} placeholder="Chọn giới tính" >
+
+                                        </Select>
+                                </Form.Item>
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="total_count"
+                                    label="Số lượng tính toán"
+                                    rules={[
+                                      {
+                                          required: true,
+                                          message: 'Vui lòng nhập số lượng tính toán'
+                                      },
+                                  ]}
+                                >
+                                    <Input placeholder='Nhập số lượng tính toán ' />
+                                </Form.Item>
+
+                            </div>
+                            <div className=' col col-12'>
+                                <Form.Item style={{ marginBottom: '4px' }}
+                                    name="shortage_count"
+                                    label="Số lượng thực tế"
+                                    rules={[
                                         {
                                             validator: (rule, value) => {
                                                 if (value && value.trim() === '') {
-                                                    return Promise.reject('Không được nhập toàn dấu cách')
+                                                    return Promise.reject('Không hợp lệ')
                                                 }
                                                 return Promise.resolve()
                                             },
                                         },
                                     ]}
                                 >
-                                    <Input placeholder='Nhập tên khách hàng' />
+                                    <Input placeholder='Nhập số lượng thực tế'/>
                                 </Form.Item>
                             </div>
                             <div className=' col col-12'>
                                 <Form.Item style={{ marginBottom: '4px' }}
-                                    name="description"
-                                    label=" Ghi chú"
+                                    name="id_detail_check"
+                                    label="Ngày kiểm kê"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng chọn ngày kiểm kê'
+                                        },
+                                    ]}
                                 >
-                                    <Input placeholder='Nhập ghi chú' />
+                                    <DatePicker
+                                        size='large'
+                                        style={{
+                                            width: "100%",
+                                            height: " 34px"
+                                        }}
+                                        placeholder="Ngày kiểm kê"
+                                        />
                                 </Form.Item>
-
                             </div>
                         </Row>
                         <Form.Item style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button color="primary"
+                            <Button type="primary" htmlType="submit"
                                 className="addBtn" style={{ marginRight: '20px', width: '94px' }}>
                                 Lưu
                             </Button>
@@ -396,10 +497,9 @@ const DanhSachKhachHang = () => {
                             </Button>
                         </Form.Item>
                     </Form>
-                </ModalBody>
+                </div>
             </Modal>
-
-        </div>
-)
-                                }
-export default DanhSachKhachHang 
+                 </Card>
+    )
+}
+export default KiemKe 
