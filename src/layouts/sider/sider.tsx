@@ -99,14 +99,6 @@ const menuItems = [
 
   },
   {
-    key: "Nhanvien",
-    label: "Nhân viên",
-    icon: (
-      <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />
-    ),
-
-  },
-  {
     key: RouterLinks.KHO_HANG,
     label: "Khách hàng",
     icon: (

@@ -19,7 +19,7 @@ import NhapKho from "../pages/kho/NhapKho";
 import XuatKho from "../pages/kho/XuatKho";
 import KiemKe from "../pages/kho/KiemKe";
 import KhuyenMai from "../pages/khuyenmai/KhuyenMai";
-import NhanVien from "../pages/baocao/NhanVien";
+import NhanVien from "../pages/baocao/nhanvien/NhanVien";
 export const router = createBrowserRouter([
   {
     path: "login",

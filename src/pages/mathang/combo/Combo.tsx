@@ -29,7 +29,7 @@ const Combo = () => {
     comboServices.get({
       page: currentPage,
       size: rowsPerPage,
-      ...(search && search !== "" && { Ten_CB: search })
+      ...(search && search !== "" && { name: search })
     }).then((res: any) => {
       if (res.status) {
         setCount(res.data.count)
@@ -39,7 +39,6 @@ const Combo = () => {
       console.log(err)
     })
   }
-
   const hanldeModalAdd = () => {
     setOpenModalAdd(false)
   }
@@ -109,7 +108,7 @@ const Combo = () => {
       render: (record: any, index: any) => <div style={{ display: 'flex', justifyContent: 'space-around', paddingRight: '20px', paddingLeft: '20px' }}>
 
         <EditOutlined onClick={() => hanldUpdate(record)} style={{ marginRight: '1rem', color: '#036CBF', cursor: 'pointer' }} />
-        <Popconfirm onConfirm={() => hanldeDelete(record.Ma_CB)} title="Bạn chắc chắn xóa?" cancelText='Hủy' okText='Đồng ý'>
+        <Popconfirm onConfirm={() => hanldeDelete(record.id)} title="Bạn chắc chắn xóa?" cancelText='Hủy' okText='Đồng ý'>
           <DeleteOutlined style={{ color: 'red', cursor: 'point' }} />
         </Popconfirm>
       </div>
@@ -118,19 +117,19 @@ const Combo = () => {
 
   useEffect(() => {
     getData()
-  }, [currentPage, rowsPerPage])
-  return <div className="ds_canbo">
+  }, [currentPage, rowsPerPage, search])
+  return <div className="ds_combo">
     {contextHolder}
     <Row>
       <Breadcrumb
         style={{ margin: "auto", marginLeft: 0 }}
         items={[
           {
-            title: "Quản lý cán bộ",
+            title: "Quản lý các combo",
           },
           {
             title: (
-              <span style={{ fontWeight: "bold" }}>Danh sách cán bộ</span>
+              <span style={{ fontWeight: "bold" }}>Danh sách combo</span>
             ),
           },
         ]}
@@ -151,7 +150,7 @@ const Combo = () => {
     <Row>
       <Col span={6}>
         <Space direction="vertical" style={{ width: "100%" }}>
-          <Typography.Text>Tên cán bộ</Typography.Text>
+          <Typography.Text>Tên combo</Typography.Text>
           <Input
             type="text"
             placeholder="Tìm kiếm"

@@ -14,6 +14,7 @@ import Combo from './pages/mathang/combo/Combo';
 import DanhMucHang from './pages/mathang/danhmuc/DanhMucHang';
 import DanhsachMatHang from './pages/mathang/danhsachmathang/DanhSachMatHang';
 import Layout from './layouts/Layout';
+import NhanVien from './pages/baocao/nhanvien/NhanVien';
 function App() {
   return (
     <Provider store={store}>
@@ -29,7 +30,7 @@ function App() {
                   <Route path={RouterLinks.COMBO} element={<Suspense fallback={null}><Combo /></Suspense>} />
                   <Route path={RouterLinks.DANH_MUC} element={<Suspense fallback={null}><DanhMucHang /></Suspense>} />
                   <Route path={RouterLinks.MAT_HANG} element={<Suspense fallback={null}><DanhsachMatHang /></Suspense>} />
-
+                  <Route path={RouterLinks.BAO_CAO_NHAN_VIEN} element={<Suspense fallback={null}><NhanVien /></Suspense>} />
 
                 </Route>
 
