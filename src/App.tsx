@@ -19,6 +19,7 @@ import NhapKho from './pages/kho/NhapKho';
 import KiemKe from './pages/kho/KiemKe';
 import DanhsachMatHang from './pages/mathang/danhsachmathang/DanhSachMatHang';
 import Layout from './layouts/Layout';
+import NhanVien from './pages/baocao/nhanvien/NhanVien';
 function App() {
   return (
     <Provider store={store}>
@@ -39,6 +40,9 @@ function App() {
                   <Route path={RouterLinks.KIEM_KE} element={<Suspense fallback={null}><KiemKe /></Suspense>} />
                   <Route path={RouterLinks.NHAP_KHO} element={<Suspense fallback={null}><NhapKho /></Suspense>} />
                   <Route path={RouterLinks.DANH_SACH_KHACH_HANG} element={<Suspense fallback={null}><DanhSachKhachHang /></Suspense>} />
+               
+                  <Route path={RouterLinks.BAO_CAO_NHAN_VIEN} element={<Suspense fallback={null}><NhanVien /></Suspense>} />
+
                 </Route>
 
               </Routes>

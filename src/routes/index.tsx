@@ -18,7 +18,8 @@ import DanhSachKhachHang from "../pages/khachhang/danhsachkhachhang";
 import TonKho from "../pages/kho/TonKho";
 import NhapKho from "../pages/kho/NhapKho";
 import KiemKe from "../pages/kho/KiemKe";
-import NhanVien from "../pages/baocao/NhanVien";
+import KhuyenMai from "../pages/khuyenmai/KhuyenMai";
+import NhanVien from "../pages/baocao/nhanvien/NhanVien";
 export const router = createBrowserRouter([
   {
     path: "login",

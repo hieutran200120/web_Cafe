@@ -6,15 +6,16 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { ColumnProps } from "antd/es/table";
 import dayjs from "dayjs";
 import { message } from "antd";
-import { productServices } from "../../../utils/services/productServices ";
-import { categoryServices } from "../../../utils/services/categoryServices";
-import { materialService } from "../../../utils/services/materialService";
+import { nhanvienServices } from "../../../utils/services/nhanvienService";
 interface DataType {
     key: number;
-    createdAt: Date;
+    birthday: Date;
+    phone_number: string;
     name: string;
+    address: string;
+    gender: number;
 }
-const DanhsachMatHang = () => {
+const NhanVien = () => {
     const loading = useSelector((state: any) => state.state.loadingState)
     const [currentPage, setCurrentPage] = useState(1)
     const [rowsPerPage, setRowsPerpage] = useState(9)
@@ -23,57 +24,19 @@ const DanhsachMatHang = () => {
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [curData, setCurData] = useState({})
     const [data, setData] = useState([])
-    const [category, setCategory] = useState([])
-    const [material, setMaterial] = useState([])
     const [count, setCount] = useState(0)
     const [messageApi, contextHolder] = message.useMessage();
-    const getcategory = () => {
-        categoryServices.get({
-            page: 1,
-            size: 100
-        }).then((res: any) => {
-            if (res.status) {
-                const temp = res.data.data.map((item: any) => {
-                    return {
-                        ...item,
-                        value: item.id,
-                        label: item.name
-                    }
-                })
-                setCategory(temp);
-            }
-        })
-    }
-    const getmaterial = () => {
-        materialService.get(
-            {
-                page: 1,
-                size: 100
-            }
-        ).then((res: any) => {
-            if (res.status) {
-                const temp = res.data.data.map((item: any) => {
-                    return {
-                        ...item,
-                        value: item.id,
-                        label: item.name
-                    }
-                })
-                setMaterial(temp);
-            }
-        })
-    }
-    console.log(material)
+
     const getData = () => {
-        productServices.get({
+        nhanvienServices.get({
             page: currentPage,
             size: rowsPerPage,
-            ...(search && search !== "" && { name: search })
+            ...(search && search !== "" && { id: search })
         }).then((res: any) => {
             if (res.status) {
                 setCount(res.data.count)
                 setData(res.data.data)
-                console.log(res.data)
+
             }
         }).catch((err: any) => {
             console.log(err)
@@ -95,7 +58,7 @@ const DanhsachMatHang = () => {
 
     const hanldeDelete = async (id: number) => {
         try {
-            const res = await productServices.deleteById(id)
+            const res = await nhanvienServices.deleteById(id)
             if (res.status) {
                 getData()
             } else {
@@ -107,7 +70,6 @@ const DanhsachMatHang = () => {
         }
     }
 
-
     const columns: ColumnProps<DataType>[] = [
         {
             title: "TT",
@@ -117,42 +79,36 @@ const DanhsachMatHang = () => {
             render: (text, record, index) => <span>{(((currentPage - 1) * rowsPerPage) + index + 1)}</span>
         },
         {
-            title: "Mặt hàng",
+            title: "Tên nhân viên",
             dataIndex: "name",
             align: "center"
         },
         {
-            title: "Ảnh",
-            dataIndex: "image",
-            render: (text) => <img src={text} width={80} height={60} />,
-        },
-        {
-            title: "Giá",
-            dataIndex: "price",
-            align: "center",
-            render: (text) => (
-                <div>
-                    {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                    }).format(text)}
-                </div>
-            ),
-        },
-        {
-            title: "Đơn vị",
-            dataIndex: "unit",
-            align: "center"
-        },
-
-        {
-            title: "Ngày nhập",
-            dataIndex: "createdAt",
+            title: "Ngày sinh",
+            dataIndex: "birthday",
             align: 'center',
             width: '20%',
             render: (text, record, index) => <span>{text ? dayjs(text).format("DD/MM/YYYY") : ""}</span>
         },
-
+        {
+            title: "Số điện thoại",
+            dataIndex: "phone_number",
+            align: 'center',
+            width: '20%',
+        },
+        {
+            title: "Giới tính",
+            dataIndex: "gender",
+            align: 'center',
+            width: '10%',
+            render: (text, record, index) => <span>{text === 1 ? "Nam" : "Nữ"}</span>
+        },
+        {
+            title: "Địa chỉ",
+            dataIndex: "address",
+            align: 'center',
+            width: '10%',
+        },
         {
             title: 'Thao tác',
             width: '108px',
@@ -168,21 +124,20 @@ const DanhsachMatHang = () => {
 
     useEffect(() => {
         getData()
-            getcategory()
-            getmaterial()
-    }, [currentPage, rowsPerPage])
-    return <div className="ds_canbo">
+    }, [currentPage, rowsPerPage, search])
+
+    return <div className="ds_nhan vien">
         {contextHolder}
         <Row>
             <Breadcrumb
                 style={{ margin: "auto", marginLeft: 0 }}
                 items={[
                     {
-                        title: "Quản lý mặt hàng",
+                        title: "Quản lý nhân viên",
                     },
                     {
                         title: (
-                            <span style={{ fontWeight: "bold" }}>Danh sách các mặt hàng</span>
+                            <span style={{ fontWeight: "bold" }}>Danh sách nhân viên</span>
                         ),
                     },
                 ]}
@@ -203,7 +158,7 @@ const DanhsachMatHang = () => {
         <Row>
             <Col span={6}>
                 <Space direction="vertical" style={{ width: "100%" }}>
-                    <Typography.Text>Các Mặt hàng</Typography.Text>
+                    <Typography.Text>Tên nhân viên</Typography.Text>
                     <Input
                         type="text"
                         placeholder="Tìm kiếm"
@@ -227,7 +182,7 @@ const DanhsachMatHang = () => {
         <Row>
 
             <Table
-                loading={loading}
+                // loading={loading}
                 style={{ width: "100%" }}
                 rowClassName={() => 'editable-row'}
                 bordered
@@ -253,14 +208,14 @@ const DanhsachMatHang = () => {
             />
 
         </Row>
-        <Modal category={category} material={material} curData={curData} action="Add" handleModal={hanldeModalAdd} open={openModalAdd} getData={getData}
+        <ModalEdit curData={curData} action="Add" handleModal={hanldeModalAdd} open={openModalAdd} getData={getData}
         />
-        <Modal category={category} material={material} curData={curData} action="Edit" handleModal={handleModalEdit} open={openModalEdit} getData={getData}
+        <ModalEdit curData={curData} action="Edit" handleModal={handleModalEdit} open={openModalEdit} getData={getData}
         />
 
     </div>;
 };
 
-const Modal = React.lazy(() => import("./Modal"))
+const ModalEdit = React.lazy(() => import("./Modal"))
 
-export default DanhsachMatHang;
+export default NhanVien;
