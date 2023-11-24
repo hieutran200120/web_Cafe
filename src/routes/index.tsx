@@ -8,17 +8,16 @@ import Doanhthu from "../pages/baocao/Doanhthu";
 import Mathang from "../pages/baocao/MatHang";
 import Khohang from "../pages/baocao/KhoHang";
 import TaiChinh from "../pages/baocao/TaiChinh";
-import DanhSachHang from "../pages/mathang/DanhSachHang";
+import DanhSachHang from "../pages/mathang/danhmuc/DanhMucHang";
 import ThucDon from "../pages/mathang/ThucDon";
-import DanhMuc from "../pages/mathang/DanhMuc";
+import DanhMuc from "../pages/mathang/danhmuc/DanhMucHang";
 import LuaChon from "../pages/mathang/LuaChon";
-import Combo from "../pages/mathang/Combo";
+import Combo from "../pages/mathang/combo/Combo";
 import DatBan from "../pages/datban/DatBan";
+import DanhSachKhachHang from "../pages/khachhang/danhsachkhachhang";
 import TonKho from "../pages/kho/TonKho";
 import NhapKho from "../pages/kho/NhapKho";
-import XuatKho from "../pages/kho/XuatKho";
 import KiemKe from "../pages/kho/KiemKe";
-import KhuyenMai from "../pages/khuyenmai/KhuyenMai";
 import NhanVien from "../pages/baocao/NhanVien";
 export const router = createBrowserRouter([
   {
@@ -87,16 +86,12 @@ export const router = createBrowserRouter([
         element: <NhapKho />,
       },
       {
-        path: RouterLinks.XUAT_KHO,
-        element: <XuatKho />,
-      },
-      {
         path: RouterLinks.KIEM_KE,
         element: <KiemKe />,
       },
       {
-        path: RouterLinks.KUYEN_MAI,
-        element: <KhuyenMai />,
+        path: RouterLinks.DANH_SACH_KHACH_HANG,
+        element: <DanhSachKhachHang />,
       },
     ],
   },

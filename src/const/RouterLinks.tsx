@@ -1,6 +1,7 @@
 export const RouterLinks = {
   LOGIN: "/login",
   REGISTER: "/register",
+  HOME_PAGE: "/",
   BAO_CAO_DOANH_THU: "/baocao/doanhthu",
   BAO_CAO_MAT_HANG: "/baocao/mathang",
   BAO_CAO_KHO_HANG: "/baocao/khohang",
@@ -14,7 +15,7 @@ export const RouterLinks = {
   DAT_BAN: "/datban",
   KHO_HANG: "/khohang/danh_sach_ton_kho",
   NHAP_KHO: "/khohang/nhapkho",
-  XUAT_KHO: "/khohang/xuatkho",
   KIEM_KE: "/khohang/kiemke",
-  KUYEN_MAI: "/khuyanmai"
+  KHUYEN_MAI: "/khuyenmai",
+  DANH_SACH_KHACH_HANG: "/khachhang/danhsachkhachhang"
 };
