@@ -50,7 +50,7 @@ const menuItems = [
         label: "Báo cáo tài chính",
       },
       {
-        key: RouterLinks.KUYEN_MAI,
+        key: RouterLinks.KHUYEN_MAI,
         label: "Báo cáo khuyễn mãi",
       },
       {
@@ -99,15 +99,30 @@ const menuItems = [
 
   },
   {
-    key: RouterLinks.KHO_HANG,
-    label: "Khách hàng",
+
+    key: "Nhanvien",
+    label: "Nhân viên",
     icon: (
       <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />
     ),
 
   },
   {
-    key: RouterLinks.KUYEN_MAI,
+    key: RouterLinks.DANH_SACH_KHACH_HANG,
+    label: "Khách hàng",
+    icon: (
+      <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />
+    ),
+    children: [
+      {
+        key: RouterLinks.DANH_SACH_KHACH_HANG,
+        label: "Danh sách khách hàng"
+      }
+    ]
+
+  },
+  {
+    key: RouterLinks.KHUYEN_MAI,
     label: "Khuyến mãi ",
     icon: (
       <ShopOutlined style={{ fontSize: "1.3rem", paddingRight: "0.5rem" }} />
@@ -128,10 +143,6 @@ const menuItems = [
       {
         key: RouterLinks.NHAP_KHO,
         label: "Nhập kho ",
-      },
-      {
-        key: RouterLinks.XUAT_KHO,
-        label: "xuất kho",
       },
       {
         key: RouterLinks.KIEM_KE,

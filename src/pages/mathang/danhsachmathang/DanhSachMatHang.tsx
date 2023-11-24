@@ -170,6 +170,7 @@ const DanhsachMatHang = () => {
         getData(),
             getcategory(),
             getmaterial()
+
     }, [currentPage, rowsPerPage])
     return <div className="ds_canbo">
         {contextHolder}

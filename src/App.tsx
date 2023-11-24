@@ -12,6 +12,11 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Combo from './pages/mathang/combo/Combo';
 import DanhMucHang from './pages/mathang/danhmuc/DanhMucHang';
+import KhuyenMai from './pages/khuyenmai/KhuyenMai';
+import DanhSachKhachHang from './pages/khachhang/danhsachkhachhang';
+import TonKho from './pages/kho/TonKho';
+import NhapKho from './pages/kho/NhapKho';
+import KiemKe from './pages/kho/KiemKe';
 import DanhsachMatHang from './pages/mathang/danhsachmathang/DanhSachMatHang';
 import Layout from './layouts/Layout';
 import NhanVien from './pages/baocao/nhanvien/NhanVien';
@@ -30,8 +35,14 @@ function App() {
                   <Route path={RouterLinks.COMBO} element={<Suspense fallback={null}><Combo /></Suspense>} />
                   <Route path={RouterLinks.DANH_MUC} element={<Suspense fallback={null}><DanhMucHang /></Suspense>} />
                   <Route path={RouterLinks.MAT_HANG} element={<Suspense fallback={null}><DanhsachMatHang /></Suspense>} />
+
                   <Route path={RouterLinks.BAO_CAO_NHAN_VIEN} element={<Suspense fallback={null}><NhanVien /></Suspense>} />
 
+                  <Route path={RouterLinks.KHUYEN_MAI} element={<Suspense fallback={null}><KhuyenMai /></Suspense>} />
+                  <Route path={RouterLinks.KHO_HANG} element={<Suspense fallback={null}><TonKho /></Suspense>} />
+                  <Route path={RouterLinks.KIEM_KE} element={<Suspense fallback={null}><KiemKe /></Suspense>} />
+                  <Route path={RouterLinks.NHAP_KHO} element={<Suspense fallback={null}><NhapKho /></Suspense>} />
+                  <Route path={RouterLinks.DANH_SACH_KHACH_HANG} element={<Suspense fallback={null}><DanhSachKhachHang /></Suspense>} />
                 </Route>
 
               </Routes>

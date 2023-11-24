@@ -1,3 +1,4 @@
+
 import CreateApiService from "../createApiService";
 
 const api = CreateApiService();
@@ -25,7 +26,6 @@ const changepassword = (data: any) => {
     data: data,
   });
 };
-
 
 export const authServices = {
   login, register, changepassword

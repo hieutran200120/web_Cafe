@@ -190,21 +190,7 @@ const ModalAddMatHang = (props: Props) => {
                         >
                             <Select options={props.category} placeholder="Chọn tên loại mặt hàng" />
                         </FormItem>
-                        {/* <FormItem
-                                    style={{ marginBottom: "4px" }}
-                                    label={
-                                        "vật liệu "
-                                    }
-                                    name='id_material'
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Hãy nhập vật liệu '
-                                        }
-                                    ]}
-                                >
-                                    <Select options={props.material} placeholder="Chọn vật liệu" />
-                                </FormItem> */}
+
                     </Col>
                     <Col span={24}>
                         <FormItem
@@ -220,10 +206,11 @@ const ModalAddMatHang = (props: Props) => {
                                 }
                             ]}
                         >
+
                             <Input.TextArea rows={4} placeholder="Nhập mô tả" />
                         </FormItem>
                     </Col>
-                    <Col>
+                    <Col span={24}>
                         <FormItem
                             style={{ marginBottom: "4px" }}
                             label={
