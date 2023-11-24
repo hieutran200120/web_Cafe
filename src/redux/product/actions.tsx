@@ -10,10 +10,11 @@ const types = {
 };
 
 const action = {
-    loadData: () => {
+    loadData(params: any) {
         return {
             type: types.LOAD_DATA,
-        }
+            payload: { params }
+        };
     },
     loadDataSuccess: (products: any) => {
         return {

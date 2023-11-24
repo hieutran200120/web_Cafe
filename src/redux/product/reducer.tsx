@@ -1,9 +1,11 @@
 import actions from "./actions";
 
 const initState = {
-    loading: false,
-    products: [],
-    errrors: null,
+    products: {
+        count: 0,
+        data: []
+    },
+    params: {}
 };
 
 const ProductReducer = (state: any = initState, action: any) => {
@@ -11,32 +13,19 @@ const ProductReducer = (state: any = initState, action: any) => {
         case actions.types.LOAD_DATA:
             return {
                 ...state,
-                loading: true,
+                params: action.payload.params
             };
         case actions.types.LOAD_DATA_SUCCESS:
             return {
                 ...state,
-                loading: false,
-                ... { products: action.payload.products },
+                loaittbs: action.payload.data
+            }
 
-            };
-        case actions.types.SELECTED_PAGE:
-            return {
-                ...state,
-                selectedPage: action.payload.selectedPage,
-            };
-        case actions.types.ADD_PRODUCT:
-            return {
-                ...state,
-            }
-        case actions.types.SET_INFO_PRODUCT:
-            return {
-                ...state,
-                infoProduct: action.payload.infoProduct
-            }
         default:
             return state;
     }
 };
+
+
 
 export default ProductReducer;

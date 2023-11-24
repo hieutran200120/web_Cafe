@@ -15,9 +15,8 @@ interface DataType {
     name: string;
 }
 const DanhsachMatHang = () => {
-    const loading = useSelector((state: any) => state.state.loadingState)
     const [currentPage, setCurrentPage] = useState(1)
-    const [rowsPerPage, setRowsPerpage] = useState(9)
+    const [rowsPerPage, setRowsPerpage] = useState(10)
     const [search, setSearch] = useState<string>('')
     const [openModalAdd, setOpenModalAdd] = useState(false)
     const [openModalEdit, setOpenModalEdit] = useState(false)
@@ -63,15 +62,15 @@ const DanhsachMatHang = () => {
             }
         })
     }
-    console.log(material)
     const getData = () => {
         productServices.get({
             page: currentPage,
             size: rowsPerPage,
-            ...(search && search !== "" && { name: search })
+            ...(search && search !== "" && { id: search })
         }).then((res: any) => {
             if (res.status) {
-                setCount(res.data.count)
+                console.log(res)
+                setCount(res.data.TotalPage)
                 setData(res.data.data)
                 console.log(res.data)
             }
@@ -172,7 +171,7 @@ const DanhsachMatHang = () => {
             getmaterial()
 
     }, [currentPage, rowsPerPage])
-    return <div className="ds_canbo">
+    return <div className="ds_mặt hàng">
         {contextHolder}
         <Row>
             <Breadcrumb
@@ -228,7 +227,7 @@ const DanhsachMatHang = () => {
         <Row>
 
             <Table
-                loading={loading}
+                // loading={loading}
                 style={{ width: "100%" }}
                 rowClassName={() => 'editable-row'}
                 bordered

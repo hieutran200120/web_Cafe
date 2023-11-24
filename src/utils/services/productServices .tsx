@@ -4,7 +4,7 @@ const api = CreateApiService();
 
 const get = (params: any) => {
     return api.makeAuthRequest({
-        url: `/api/v1/product`,
+        url: `/api/v1/product/`,
         method: "GET",
         params: params
     });

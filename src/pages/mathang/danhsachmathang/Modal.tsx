@@ -76,9 +76,10 @@ const ModalAddMatHang = (props: Props) => {
             formData.append("description", values.description);
 
             // Đảm bảo values.file là một File object
-            if (values.file instanceof File) {
-                formData.append("file", values.file.uid);
-            }
+
+            const file = values.file.fileList[0].originFileObj;
+            formData.append("file", file);
+
             console.log(values)
             console.log(values.file.uid)
             if (action === "Add") {
