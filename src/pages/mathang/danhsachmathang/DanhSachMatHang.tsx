@@ -8,22 +8,21 @@ import dayjs from "dayjs";
 import { message } from "antd";
 import { productServices } from "../../../utils/services/productServices ";
 import { categoryServices } from "../../../utils/services/categoryServices";
-import { materialService } from "../../../utils/services/materialService";
 interface DataType {
     key: number;
     createdAt: Date;
     name: string;
 }
 const DanhsachMatHang = () => {
+    const loading = useSelector((state: any) => state.state.loadingState)
     const [currentPage, setCurrentPage] = useState(1)
-    const [rowsPerPage, setRowsPerpage] = useState(10)
+    const [rowsPerPage, setRowsPerpage] = useState(9)
     const [search, setSearch] = useState<string>('')
     const [openModalAdd, setOpenModalAdd] = useState(false)
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [curData, setCurData] = useState({})
     const [data, setData] = useState([])
     const [category, setCategory] = useState([])
-    const [material, setMaterial] = useState([])
     const [count, setCount] = useState(0)
     const [messageApi, contextHolder] = message.useMessage();
     const getcategory = () => {
@@ -43,36 +42,15 @@ const DanhsachMatHang = () => {
             }
         })
     }
-    const getmaterial = () => {
-        materialService.get(
-            {
-                page: 1,
-                size: 100
-            }
-        ).then((res: any) => {
-            if (res.status) {
-                const temp = res.data.data.map((item: any) => {
-                    return {
-                        ...item,
-                        value: item.id,
-                        label: item.name
-                    }
-                })
-                setMaterial(temp);
-            }
-        })
-    }
     const getData = () => {
         productServices.get({
             page: currentPage,
             size: rowsPerPage,
-            ...(search && search !== "" && { id: search })
+            ...(search && search !== "" && { name: search })
         }).then((res: any) => {
             if (res.status) {
-                console.log(res)
-                setCount(res.data.TotalPage)
+                setCount(res.data.count)
                 setData(res.data.data)
-                console.log(res.data)
             }
         }).catch((err: any) => {
             console.log(err)
@@ -158,7 +136,7 @@ const DanhsachMatHang = () => {
             render: (record: any, index: any) => <div style={{ display: 'flex', justifyContent: 'space-around', paddingRight: '20px', paddingLeft: '20px' }}>
 
                 <EditOutlined onClick={() => hanldUpdate(record)} style={{ marginRight: '1rem', color: '#036CBF', cursor: 'pointer' }} />
-                <Popconfirm onConfirm={() => hanldeDelete(record.id)} title="Bạn chắc chắn xóa?" cancelText='Hủy' okText='Đồng ý'>
+                <Popconfirm onConfirm={() => hanldeDelete(record.Ma_CB)} title="Bạn chắc chắn xóa?" cancelText='Hủy' okText='Đồng ý'>
                     <DeleteOutlined style={{ color: 'red', cursor: 'point' }} />
                 </Popconfirm>
             </div>
@@ -166,12 +144,10 @@ const DanhsachMatHang = () => {
     ]
 
     useEffect(() => {
-        getData(),
-            getcategory(),
-            getmaterial()
-
+        getData()
+        getcategory()
     }, [currentPage, rowsPerPage])
-    return <div className="ds_mặt hàng">
+    return <div className="ds_canbo">
         {contextHolder}
         <Row>
             <Breadcrumb
@@ -225,9 +201,8 @@ const DanhsachMatHang = () => {
             <Divider style={{ margin: "10px" }}></Divider>
         </Row>
         <Row>
-
             <Table
-                // loading={loading}
+                loading={loading}
                 style={{ width: "100%" }}
                 rowClassName={() => 'editable-row'}
                 bordered
@@ -253,9 +228,9 @@ const DanhsachMatHang = () => {
             />
 
         </Row>
-        <Modal category={category} material={material} curData={curData} action="Add" handleModal={hanldeModalAdd} open={openModalAdd} getData={getData}
+        <Modal category={category} curData={curData} action="Add" handleModal={hanldeModalAdd} open={openModalAdd} getData={getData}
         />
-        <Modal category={category} material={material} curData={curData} action="Edit" handleModal={handleModalEdit} open={openModalEdit} getData={getData}
+        <Modal category={category} curData={curData} action="Edit" handleModal={handleModalEdit} open={openModalEdit} getData={getData}
         />
 
     </div>;
