@@ -1,4 +1,4 @@
-import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, DatePicker, Select } from "antd"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, DatePicker, Select, Divider } from "antd"
 import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
@@ -13,6 +13,7 @@ import {getDeChInventory, createDeChInventory, deleteDeChInventory, updateDeChIn
 import { getMaterial } from "../../utils/services/material"
 import { getChInventory } from "../../utils/services/checkInventory"
 import withReactContent from "sweetalert2-react-content"
+import dayjs from 'dayjs'
 
 const KiemKe = () => {
     // const ability = useContext(AbilityContext)
@@ -68,25 +69,6 @@ const KiemKe = () => {
                   console.log(err)
                 })
               }
-            //   const getCheckInventory = () => {
-            //     getMaterial({
-            //         params: {
-            //             page: currentPage,
-            //             limit: rowsPerPage,
-            //         },
-            //     })
-            //         .then((res) => {
-            //             const data = res.data.data.map((item) => {
-            //                 return {
-            //                     value: item.id,
-            //                     label: item.name
-            //                 }
-            //             })
-            //             setMaterial(data)})
-            //             .catch((err) => {
-            //               console.log(err)
-            //             })
-            //           }
               const getCheckInventory = () => {
                 getChInventory({
                     params: {
@@ -119,7 +101,14 @@ const KiemKe = () => {
         // setIsEdit(false)
     }
     const handleEdit = (record) => {
-        form.setFieldsValue(record)
+        form.setFieldsValue({
+            id: record.id,
+            name: record.name,
+            amount: record.amount,
+            unit: record.unit,
+            description: record.description,
+            expriation_date : record.expriation_date? dayjs(record.expriation_date ) : null ,
+        })
         setAction('Edit')
         setIsAdd(true)
         setIdEdit(record.id)
@@ -312,12 +301,18 @@ const KiemKe = () => {
                 style={{ margin: "auto",marginBottom:"14px", marginLeft: 0 }}
                 items={[
                     {
+                        title: "Quản lý kho hàng",
+                    },
+                    {
+                        
                         title: (
-                            <span style={{ fontWeight: "bold" }}>Danh sách lịch sử tồn kho</span>
+                            <span style={{ fontWeight: "bold" }}>Lịch sử kiểm kê</span>
                         ),
+                    
                     },
                 ]}
             />
+            <Divider style={{ margin: "10px" }}></Divider>
             <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
@@ -401,7 +396,7 @@ const KiemKe = () => {
                     tag="div"
                 >
                      <h2 className="modal-title">{
-                        action === 'Add' ? "Thêm mớilịch sử tồn kho" : "Chỉnh sửalịch sử tồn kho"
+                        action === 'Add' ? "Thêm mới lịch sử tồn kho" : "Chỉnh sửa lịch sử tồn kho"
                     } </h2>
                 </div>
                 

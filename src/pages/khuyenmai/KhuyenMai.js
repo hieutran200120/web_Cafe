@@ -1,4 +1,4 @@
-import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, Select } from "antd"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, Select, Divider } from "antd"
 import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
@@ -279,6 +279,7 @@ const Promotion = () => {
                     },
                 ]}
             />
+              <Divider style={{ margin: "10px" }}></Divider>
             <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
