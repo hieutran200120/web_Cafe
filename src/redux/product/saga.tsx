@@ -1,5 +1,5 @@
 import { all, fork, put, select, takeEvery } from "redux-saga/effects";
-import { productServices } from '../../utils/services/productServices '
+import { getProduct } from '../../utils/services/productServices '
 import actions from "./actions";
 import stateActions from "../state/actions"
 
@@ -8,7 +8,7 @@ function* saga_loadData() {
         let _params: Promise<any> = yield select((state: any) => state.canbo.params)
         let params: any = _params
         yield put(stateActions.action.loadingState(true))
-        let _response: Promise<any> = yield productServices.get({
+        let _response: Promise<any> = yield getProduct({
             ...params
         })
         let response: any = _response

@@ -9,6 +9,7 @@ import Mathang from "../pages/baocao/MatHang";
 import Khohang from "../pages/baocao/KhoHang";
 import TaiChinh from "../pages/baocao/TaiChinh";
 import DanhSachHang from "../pages/mathang/danhmuc/DanhMucHang";
+import DanhSachSanPham from "../pages/mathang/DanhSachSanPham";
 import ThucDon from "../pages/mathang/ThucDon";
 import DanhMuc from "../pages/mathang/danhmuc/DanhMucHang";
 import LuaChon from "../pages/mathang/LuaChon";
@@ -18,7 +19,8 @@ import DanhSachKhachHang from "../pages/khachhang/danhsachkhachhang";
 import TonKho from "../pages/kho/TonKho";
 import NhapKho from "../pages/kho/NhapKho";
 import KiemKe from "../pages/kho/KiemKe";
-import NhanVien from "../pages/baocao/NhanVien";
+import KhuyenMai from "../pages/khuyenmai/KhuyenMai";
+import NhanVien from "../pages/baocao/nhanvien/NhanVien";
 export const router = createBrowserRouter([
   {
     path: "login",
@@ -53,9 +55,14 @@ export const router = createBrowserRouter([
         path: RouterLinks.BAO_CAO_NHAN_VIEN,
         element: <NhanVien />,
       },
+      // {
+      //   path: RouterLinks.MAT_HANG,
+      //   element: <DanhSachHang />,
+      // },
+      
       {
-        path: RouterLinks.MAT_HANG,
-        element: <DanhSachHang />,
+        path: RouterLinks.DS_MAT_HANG,
+        element: <DanhSachSanPham />,
       },
       {
         path: RouterLinks.THUC_DON,

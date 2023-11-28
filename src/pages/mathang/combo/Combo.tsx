@@ -14,6 +14,8 @@ interface DataType {
   name: string;
 }
 const Combo = () => {
+  const dispatch = useDispatch()
+  const actions = useAction()
   const loading = useSelector((state: any) => state.state.loadingState)
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerpage] = useState(9)
@@ -26,20 +28,24 @@ const Combo = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const getData = () => {
+    dispatch(actions.StateAction.loadingState(true))
     comboServices.get({
       page: currentPage,
       size: rowsPerPage,
-      ...(search && search !== "" && { Ten_CB: search })
-    }).then((res: any) => {
+      ...(search && search !== " " && { search })
+    }).then((res) => {
       if (res.status) {
         setCount(res.data.count)
         setData(res.data.data)
       }
+      dispatch(actions.StateAction.loadingState(false))
+
     }).catch((err: any) => {
       console.log(err)
+      dispatch(actions.StateAction.loadingState(false))
+
     })
   }
-
   const hanldeModalAdd = () => {
     setOpenModalAdd(false)
   }
@@ -109,7 +115,7 @@ const Combo = () => {
       render: (record: any, index: any) => <div style={{ display: 'flex', justifyContent: 'space-around', paddingRight: '20px', paddingLeft: '20px' }}>
 
         <EditOutlined onClick={() => hanldUpdate(record)} style={{ marginRight: '1rem', color: '#036CBF', cursor: 'pointer' }} />
-        <Popconfirm onConfirm={() => hanldeDelete(record.Ma_CB)} title="Bạn chắc chắn xóa?" cancelText='Hủy' okText='Đồng ý'>
+        <Popconfirm onConfirm={() => hanldeDelete(record.id)} title="Bạn chắc chắn xóa?" cancelText='Hủy' okText='Đồng ý'>
           <DeleteOutlined style={{ color: 'red', cursor: 'point' }} />
         </Popconfirm>
       </div>
@@ -118,19 +124,19 @@ const Combo = () => {
 
   useEffect(() => {
     getData()
-  }, [currentPage, rowsPerPage])
-  return <div className="ds_canbo">
+  }, [currentPage, rowsPerPage, search])
+  return <div className="ds_combo">
     {contextHolder}
     <Row>
       <Breadcrumb
         style={{ margin: "auto", marginLeft: 0 }}
         items={[
           {
-            title: "Quản lý cán bộ",
+            title: "Quản lý các combo",
           },
           {
             title: (
-              <span style={{ fontWeight: "bold" }}>Danh sách cán bộ</span>
+              <span style={{ fontWeight: "bold" }}>Danh sách combo</span>
             ),
           },
         ]}
@@ -151,7 +157,7 @@ const Combo = () => {
     <Row>
       <Col span={6}>
         <Space direction="vertical" style={{ width: "100%" }}>
-          <Typography.Text>Tên cán bộ</Typography.Text>
+          <Typography.Text>Tên combo</Typography.Text>
           <Input
             type="text"
             placeholder="Tìm kiếm"

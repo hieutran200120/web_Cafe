@@ -1,4 +1,4 @@
-import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, DatePicker } from "antd"
+import { Table, Input, Card, Modal, Button, Popconfirm, Breadcrumb, Form, DatePicker, Divider } from "antd"
 import { useState, Fragment, useEffect, useRef } from "react"
 import {
     Label,
@@ -12,6 +12,7 @@ import Swal from "sweetalert2"
 import {getMaterial, createMaterial, deleteMaterial, updateMaterial } from "../../utils/services/material"
 import { toDateString } from "../../utils/dateString"
 import withReactContent from "sweetalert2-react-content"
+import dayjs from 'dayjs'
 
 const TonKho = () => {
     // const ability = useContext(AbilityContext)
@@ -59,7 +60,14 @@ const TonKho = () => {
         setIsAdd(false)
     }
     const handleEdit = (record) => {
-        form.setFieldsValue(record)
+        form.setFieldsValue({
+            id: record.id,
+            name: record.name,
+            amount: record.amount,
+            unit: record.unit,
+            description: record.description,
+            expriation_date : record.expriation_date? dayjs(record.expriation_date ) : null ,
+        })
         setAction('Edit')
         setIsAdd(true)
         setIdEdit(record.id)
@@ -180,7 +188,7 @@ const TonKho = () => {
             align: "center",
             render: (text, record, index) => {
                 console.log("ex", record.expriation_date)
-                const formattedDate = moment(record.expriation_date).format("YYYY-MM-DD");
+                const formattedDate = moment(record.expriation_date).format("DD-MM-YYYY");
                 return(
                     <span>{formattedDate}</span>
                 )
@@ -236,12 +244,18 @@ const TonKho = () => {
                 style={{ margin: "auto",marginBottom:"14px", marginLeft: 0 }}
                 items={[
                     {
+                        title: "Quản lý kho hàng",
+                    },
+                    {
+                        
                         title: (
                             <span style={{ fontWeight: "bold" }}>Danh sách các nguyên liệu còn trong kho </span>
                         ),
+                    
                     },
                 ]}
             />
+            <Divider style={{ margin: "10px" }}></Divider>
             <Row style={{ justifyContent: "space-between", display: "flex", marginBottom:'10px' }}>
                 <Col sm="4" style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Label
