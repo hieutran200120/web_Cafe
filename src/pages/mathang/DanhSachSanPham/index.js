@@ -9,16 +9,12 @@ import {
 import { Plus, X } from "react-feather"
 import { DeleteOutlined, EditOutlined, LockOutlined } from "@ant-design/icons"
 import Swal from "sweetalert2"
-import {getPromotion, createPromotion, deletePromotion, updatePromotion } from "../../utils/services/promotion"
-import {getProduct} from "../../utils/services/productServices "
+import {getProduct, createProduct, deleteProduct, updateProduct } from "../../../../src/utils/services/productServices "
 import withReactContent from "sweetalert2-react-content"
 
-// import { AbilityContext } from '@src/utility/context/Can'
 
 
-
-const Promotion = () => {
-    // const ability = useContext(AbilityContext)
+const DanhSachSanPham = () => {
     const [form] = Form.useForm()
 
     const selected = useRef()
@@ -37,11 +33,12 @@ const Promotion = () => {
     const [isAdd, setIsAdd] = useState(false)
 
     const getData = () => {
-        getPromotion({
+        console.log("t", search)
+        getProduct({
             params: {
                 page: currentPage,
                 limit: rowsPerPage,
-                ...(search && search !== "" && { search }),
+                search: search
             },
         })
             .then((res) => {
@@ -53,30 +50,31 @@ const Promotion = () => {
             })
     }
 
-    const getProduct = () => {
-     getProduct({
-        params: {
-            page: currentPage,
-            limit: rowsPerPage,
-            // ...(search && search !== "" && { search }),
-        },
-    })
-      .then(res => {
-        const data = res.data.data.map((item) => {
-          return {
-            value: item.id,
-            label: item.name
-          }
-        })
-        setProduct(data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-    }
+    // const getProduct = () => {
+    //   productServices.get({
+    //     params: {
+    //         page: currentPage,
+    //         limit: rowsPerPage,
+    //         ...(search && search !== "" && { search }),
+    //     },
+    // })
+    //   .then(res => {
+    //     const data = res.data.data.map((item) => {
+    //       return {
+    //         value: item.id,
+    //         label: item.name
+    //       }
+    //     })
+    //     setProduct(data)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    // }
     useEffect(() => {
         getData()
         getProduct()
+        console.log("search", search)
     }, [currentPage, rowsPerPage, search])
 
 
@@ -99,7 +97,7 @@ const Promotion = () => {
     }
     const onFinish = (values) => {
         if (action === 'Add') {
-            createPromotion({
+            createProduct({
                 name: values.name,
                 id_product: values.id_product
             })
@@ -127,7 +125,7 @@ const Promotion = () => {
                     })
                 })
         } else {
-            updatePromotion(idEdit, values)
+            updateProduct(idEdit, values)
                 .then((res) => {
                     MySwal.fire({
                         title: "Chỉnh sửa thành công",
@@ -154,16 +152,8 @@ const Promotion = () => {
         }
 
     }
-    const callEdit = (data) => {
-        const dataSubmit = {
-            ...selected.current,
-            ...data,
-        }
-    }
-
-   
     const handleDelete = (key) => {
-        deletePromotion(key)
+        deleteProduct(key)
             .then((res) => {
                 MySwal.fire({
                     title: "Xóa khuyến mãi thành công",
@@ -468,4 +458,4 @@ const Promotion = () => {
                  </Card>
     )
 }
-export default Promotion 
+export default DanhSachSanPham 

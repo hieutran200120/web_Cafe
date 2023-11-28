@@ -68,7 +68,7 @@ const menuItems = [
     ),
     children: [
       {
-        key: RouterLinks.MAT_HANG,
+        key: RouterLinks.DS_MAT_HANG,
         label: "Danh sách mặt hàng",
       },
       {
