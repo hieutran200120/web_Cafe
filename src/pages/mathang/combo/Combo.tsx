@@ -14,6 +14,8 @@ interface DataType {
   name: string;
 }
 const Combo = () => {
+  const dispatch = useDispatch()
+  const actions = useAction()
   const loading = useSelector((state: any) => state.state.loadingState)
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerpage] = useState(9)
@@ -26,17 +28,22 @@ const Combo = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const getData = () => {
+    dispatch(actions.StateAction.loadingState(true))
     comboServices.get({
       page: currentPage,
       size: rowsPerPage,
-      ...(search && search !== "" && { name: search })
-    }).then((res: any) => {
+      ...(search && search !== " " && { search })
+    }).then((res) => {
       if (res.status) {
         setCount(res.data.count)
         setData(res.data.data)
       }
+      dispatch(actions.StateAction.loadingState(false))
+
     }).catch((err: any) => {
       console.log(err)
+      dispatch(actions.StateAction.loadingState(false))
+
     })
   }
   const hanldeModalAdd = () => {

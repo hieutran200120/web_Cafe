@@ -35,7 +35,6 @@ function App() {
                 <Route path={RouterLinks.HOME_PAGE} element={<Layout />}>
                   <Route path={RouterLinks.COMBO} element={<Suspense fallback={null}><Combo /></Suspense>} />
                   <Route path={RouterLinks.DANH_MUC} element={<Suspense fallback={null}><DanhMucHang /></Suspense>} />
-                  {/* <Route path={RouterLinks.MAT_HANG} element={<Suspense fallback={null}><DanhsachMatHang /></Suspense>} /> */}
                   <Route path={RouterLinks.DS_MAT_HANG} element={<Suspense fallback={null}><DanhSachSanPham /></Suspense>} />
                   <Route path={RouterLinks.KHUYEN_MAI} element={<Suspense fallback={null}><KhuyenMai /></Suspense>} />
                   <Route path={RouterLinks.KHO_HANG} element={<Suspense fallback={null}><TonKho /></Suspense>} />
